@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteMappingsManager">
+    <list>
+      <list>
+        <remote-mappings server-id="python@sftp://efrco@132.72.46.178:22/home/efrco/.local/share/virtualenvs/efrco-master-BYjOffaj/bin/python3.7">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/home/efrco/efrco-master" />
+            </list>
+          </settings>
+        </remote-mappings>
+        <remote-mappings server-id="python@sftp://efrco@132.72.65.230:22/home/efrco/.local/share/virtualenvs/efrco-master-BYjOffaj/bin/python3.7" />
+      </list>
+    </list>
+  </component>
+</project>
