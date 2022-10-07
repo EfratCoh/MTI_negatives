@@ -4,7 +4,7 @@ from numpy import ndarray
 from pandas import DataFrame
 from utilsfile import read_csv, to_csv
 # from utils.utilsfile import read_csv, to_csv
-
+import pandas as pd
 
 class FeatureReader:
     def __init__(self, expected_num_of_features: int):
@@ -13,8 +13,8 @@ class FeatureReader:
     def _feature(self, data) -> List:
 
         col_list = list(data.columns)
-        # all_features = col_list[col_list.index("Seed_match_interactions_all"):]
-        all_features = col_list[col_list.index("Acc_P10_10th"):]
+        all_features = col_list[col_list.index("Seed_match_interactions_all"):]
+        # all_features = col_list[col_list.index("Acc_P10_10th"):]
 
         # In this step we read all featuers include hot encoding and after that we remove them
         # in the next step
@@ -23,7 +23,6 @@ class FeatureReader:
 
     def file_reader(self, in_file: Path) -> (DataFrame, ndarray):
         data: DataFrame = read_csv(in_file)
-        #data = data.astype({"miRNAMatchPosition_1": "category", "miRNAMatchPosition_2": int})
 
         # we care on object type columns
         for i in range(1, 21):
@@ -37,8 +36,9 @@ class FeatureReader:
     def df_reader(self, in_df: DataFrame) -> (DataFrame, ndarray):
         y: ndarray = in_df.Label.ravel()
         feature_list: List = self._feature(in_df)
-
         X = in_df[feature_list]
+
+
         assert len(X.columns) == self.expected_num_of_features, f"""Read error. Wrong number of features.
                Read: {len(X.columns)}
                Expected: {self.expected_num_of_features}"""

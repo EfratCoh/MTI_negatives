@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="efrco@132.72.80.146:22 (3)" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="efrco@132.72.46.190:22" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
       <paths name="EFRCO@132.72.46.239:22">
         <serverdata>
@@ -86,7 +86,21 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.42.147:22 (4)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.42.171:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.42.171:22 (2)">
         <serverdata>
           <mappings>
             <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
@@ -100,6 +114,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.42.18:22 (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.42.20:22">
         <serverdata>
           <mappings>
@@ -107,10 +128,24 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.44.100:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.44.70:22">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.44.71:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
@@ -205,6 +240,27 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.46.118:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy=" /home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.118:22 (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.118:22 (3)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.46.120:22">
         <serverdata>
           <mappings>
@@ -216,6 +272,34 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.120:22 (3)">
+        <serverdata>
+          <mappings>
+            <mapping deploy=" /home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.120:22 (4)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.120:22 (5)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.120:22 (6)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
@@ -262,6 +346,20 @@
         </serverdata>
       </paths>
       <paths name="efrco@132.72.46.130:22 (4)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.175:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy=" /home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.175:22 (2)">
         <serverdata>
           <mappings>
             <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
@@ -366,10 +464,24 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.46.190:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.46.195:22">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.195:22 (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
@@ -527,6 +639,27 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.46.207:22 (5)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.207:22 (6)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.207:22 (7)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.46.208:22">
         <serverdata>
           <mappings>
@@ -535,6 +668,13 @@
         </serverdata>
       </paths>
       <paths name="efrco@132.72.46.208:22 (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.208:22 (3)">
         <serverdata>
           <mappings>
             <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
@@ -559,6 +699,13 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.213:22 (3)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
@@ -597,6 +744,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.46.235:22 (6)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.46.239:22">
         <serverdata>
           <mappings>
@@ -618,7 +772,28 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.46.239:22 (4)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.239:22 (5)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.46.240:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.46.245:22">
         <serverdata>
           <mappings>
             <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
@@ -758,6 +933,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.65.231:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.65.232:22">
         <serverdata>
           <mappings>
@@ -797,6 +979,13 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.65.244:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
@@ -916,6 +1105,13 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.67.216:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/efrco-master" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

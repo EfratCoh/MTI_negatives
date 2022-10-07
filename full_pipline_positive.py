@@ -32,7 +32,7 @@ def full_pipline(name_of_file: str):
 
     name_of_file = name_of_file_primary + "_site.csv"
     fout = fout_primary / "site_step" /name_of_file
-    # get_site_from_extended_site(fin, fout)
+    get_site_from_extended_site(fin, fout)
 
     print("###############Normaliztion#############")
 
@@ -72,10 +72,14 @@ def generate_positive_interaction():
         print("full pipline for : ", dataset_file)
         full_pipline(dataset_name)
 
-        pos = MERGE_DATA / "positive_interactions_new/featuers_step" / (str(dataset_file.stem)+'.csv')
-        open = read_csv(pos)
-        open.drop(columns=['Seed_match_noncanonical', 'Seed_match_canonical'], inplace=True)
-        to_csv(open, pos)
+        # pos = MERGE_DATA / "positive_interactions_new/featuers_step" / (str(dataset_file.stem)+'.csv')
+        # open = read_csv(pos)
+        #
+        # # open.drop(columns=['Seed_match_noncanonical', 'Seed_match_canonical'], inplace=True)
+        # open = open[~open.isna().any(axis=1)]
+        # to_csv(open, pos)
 
 generate_positive_interaction()
+
+
 

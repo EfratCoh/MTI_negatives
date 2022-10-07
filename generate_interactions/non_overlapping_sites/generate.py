@@ -272,24 +272,24 @@ def main():
         fout_name = p.name.split('.csv')[0] + '.csv'
         worker(p, fout_name, tmp_base)
         # worker2(mockMrna, fout_name, tmp_base)
-        break
+        # break
 
 #
 # main()
 # print("")
 
 #
-count = 0
-df = read_csv(Path("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites/darnell_human_ViennaDuplex_features_negative.csv"))
-gruop_rows = df.groupby(['Gene_ID', "miRNA ID"])
-group = list(gruop_rows.groups)
-for g in group:
-    mirna_name = g[1]
-    mrna_name = g[0]
-    rows_group = df[(df['Gene_ID'] == mrna_name)]
-    # get all the rows of this subset of interactions with the same mirna and mrna
-    rows_group = rows_group[rows_group["miRNA ID"] == mirna_name]
-    if len(rows_group) > 1:
-        count = count + 1
-print(count)
+# count = 0
+# df = read_csv(Path("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites/darnell_human_ViennaDuplex_features_negative.csv"))
+# gruop_rows = df.groupby(['Gene_ID', "miRNA ID"])
+# group = list(gruop_rows.groups)
+# for g in group:
+#     mirna_name = g[1]
+#     mrna_name = g[0]
+#     rows_group = df[(df['Gene_ID'] == mrna_name)]
+#     # get all the rows of this subset of interactions with the same mirna and mrna
+#     rows_group = rows_group[rows_group["miRNA ID"] == mirna_name]
+#     if len(rows_group) > 1:
+#         count = count + 1
+# print(count)
 #

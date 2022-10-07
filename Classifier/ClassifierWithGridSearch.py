@@ -64,7 +64,7 @@ class ClassifierWithGridSearch(object):
         clf = self.clf_dict[clf_name]
         print(clf)
         parameters = conf['parameters']
-        grid_obj = GridSearchCV(estimator=clf,param_grid= parameters, scoring=scoring, cv=4, n_jobs=-1, verbose=3)
+        grid_obj = GridSearchCV(estimator=clf,param_grid=parameters, scoring=scoring, cv=5, n_jobs=-1, verbose=3)
         # grid_obj = GridSearchCV(estimator=clf,param_grid= parameters, scoring=scoring, cv=1, n_jobs=-1, verbose=3)
 
         skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=44)
@@ -77,7 +77,7 @@ class ClassifierWithGridSearch(object):
             prval = grid_obj.predict_proba(x1)[:, 1]
             return_dict[self.dataset_name] = roc_auc_score(y1, prval)
         # this step find to optimize prams
-        grid_obj = GridSearchCV(clf, parameters, scoring=scoring, cv=4, n_jobs=-1, verbose=3)
+        grid_obj = GridSearchCV(clf, parameters, scoring=scoring, cv=5, n_jobs=-1, verbose=3)
         grid_obj.fit(self.X, self.y)
         print('\n Best estimator:')
         print(grid_obj.best_estimator_)
@@ -121,7 +121,7 @@ class ClassifierWithGridSearch(object):
         parameters = conf['parameters']
 
         # this step find to optimize prams
-        grid_obj = GridSearchCV(clf, parameters, scoring=scoring, cv=4, n_jobs=-1, verbose=3)
+        grid_obj = GridSearchCV(clf, parameters, scoring=scoring, cv=5, n_jobs=-1, verbose=3)
         grid_obj.fit(self.X, self.y)
 
         print('\n Best estimator:')
@@ -177,7 +177,7 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
     csv_dir = DATA_PATH_INTERACTIONS / "train" / name_method
     files = list(csv_dir.glob('**/*.csv'))
     for f in files:
-        results_dir = ROOT_PATH / "Results/" / dir_method
+        results_dir = ROOT_PATH / "Results/models" / dir_method
         logger.info(f"results_dir = {results_dir}")
         logger.info(f"start dataset = {f}")
         worker(f, results_dir=results_dir, yaml_file=yaml_file)
@@ -186,8 +186,8 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
 
 
 def build_classifiers():
-    yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params_small.yml"
-    # yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params.yml"
+    # yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params_small.yml"
+    yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params.yml"
 
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
     # self_fit("without_hot_encoding", yaml_file, 1, 2)

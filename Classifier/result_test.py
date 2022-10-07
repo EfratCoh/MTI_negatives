@@ -24,28 +24,48 @@ from xgboost import XGBClassifier
 # from utils.utilsfile import read_csv, to_csv
 from utilsfile import read_csv, to_csv
 from sklearn.metrics import f1_score
-
+from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
-
+from sklearn.metrics import confusion_matrix
 import Classifier.FeatureReader as FeatureReader
 from Classifier.FeatureReader import get_reader
 from Classifier.ClfLogger import logger
 from consts.global_consts import ROOT_PATH, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+import seaborn as sns
+
 
 class NoModelFound(Exception):
     pass
 
 
 def measurement(y_true, y_pred):
-    cm = confusion_matrix(y_true, y_pred)
-    TP = cm[0][0]
-    FP = cm[0][1]
-    FN = cm[1][0]
-    TN = cm[1][1]
+    cm = confusion_matrix(y_true, y_pred).ravel()
+    # cm = confusion_matrix(y_true, y_pred)
+
+
+    # print(cm)
+    # TP = cm[0][0]
+    # FP = cm[0][1]
+    # FN = cm[1][0]
+    # TN = cm[1][1]
+    TP = cm[3]
+    FP = cm[1]
+    FN = cm[2]
+    TN = cm[0]
+    print("TP:", TP)
+    print("FP:", FP)
+    print("FN:", FN)
+    print("TN:", TN)
+    try:
+        auc = roc_auc_score(y_true, y_pred)
+    except:
+        auc = 0
 
     d = {
         # Sensitivity, hit rate, recall, or true positive rate
-        "TPR" : TP / (TP + FN),
+        "TPR": TP / (TP + FN),
         # Specificity or true negative rate
         "TNR": TN / (TN + FP),
         # Precision or positive predictive value
@@ -61,9 +81,10 @@ def measurement(y_true, y_pred):
         # Overall accuracy
         "ACC": (TP + TN) / (TP + FP + FN + TN),
         # roc auc
-        "AUC": roc_auc_score(y_true, y_pred),
+        "AUC": auc,
         "F1": f1_score(y_true, y_pred)
     }
+
     return {k: round(v,3) for k, v in d.items()}
 
 
@@ -92,7 +113,7 @@ def xgbs_feature_importance(clf: XGBClassifier, X_train: DataFrame):
     return feature_importances
 
 
-def plot_feature_importances(clf: XGBClassifier, X_train: DataFrame, s_org,d_org):
+def plot_feature_importances(clf: XGBClassifier, X_train, s_org, d_org, name_classifiers):
     feat_imp = pd.DataFrame({'importance': clf.feature_importances_})
     feat_imp['feature'] = X_train.columns
     feat_imp.sort_values(by='importance', ascending=False, inplace=True)
@@ -106,18 +127,18 @@ def plot_feature_importances(clf: XGBClassifier, X_train: DataFrame, s_org,d_org
     d_org = d_org.split('ViennaDuplex')[0]
 
     # fname = ROOT_PATH / Path("Results/figuers/feature_importance/") / f"{s_org}_{d_org}_summary_plot.pdf"
-    fname = ROOT_PATH / Path("Results/figuers_under/feature_importance/") / f"{s_org}_{d_org}_summary_plot.pdf"
+    fname = ROOT_PATH / Path(f"Results/figuers/{name_classifiers}/feature_importance/") / f"{s_org}_{d_org}_summary_plot.pdf"
     plt.savefig(fname, format="pdf", bbox_inches='tight')
     plt.show()
     plt.clf()
 
 
-def model_shap_plot(test, model, model_name,s_org,d_org,dependence_feature=None):
+def model_shap_plot(test, model, model_name,s_org,d_org,name_classifiers, dependence_feature=None):
 
     shap_values = shap.TreeExplainer(model).shap_values(test.values.astype('float'))
     shap.summary_plot(shap_values, test, show=False, max_display=10, feature_names=test.columns)
     plt.title(f"{s_org}_{d_org}_summary_plot")
-    fname = ROOT_PATH / Path("Results/figuers_under/shap/") / f"{s_org}_{d_org}_summary_plot.pdf"
+    fname = ROOT_PATH / Path(f"Results/figuers/{name_classifiers}/shap/") / f"{s_org}_{d_org}_summary_plot.pdf"
     plt.savefig(fname, format="pdf", bbox_inches='tight')
     plt.show()
     plt.clf()
@@ -129,63 +150,64 @@ def model_shap_plot(test, model, model_name,s_org,d_org,dependence_feature=None)
     #     plt.clf()
 
 
+#
+# def self_results_summary(method_split: str):
+#     ms_table = pd.DataFrame(columns={"TPR", "TNR", "PPV", "NPV", "FPR", "FNR", "FDR","ACC"})
+#     results_dir = ROOT_PATH / Path("Results")
+#     test_dir = DATA_PATH_INTERACTIONS / "test" / method_split
+#     train_dir = DATA_PATH_INTERACTIONS / "train"
+#
+#     methods = ['xgbs']
+#     res_table: DataFrame = pd.DataFrame()
+#     FeatureReader.reader_selection_parameter = "without_hot_encoding"
+#     feature_reader = get_reader()
+#
+#     for f_test in test_dir.glob("*test*"):
+#         f_stem = f_test.stem
+#         dataset = f_stem.split(".csv")[0]
+#         for method in methods:
+#             print(f"test: {f_test}, method: {method}")
+#             try:
+#                 dataset = dataset.replace("test", "train")
+#                 clf = get_presaved_clf(results_dir, dataset, method)
+#                 X_test, y_test = feature_reader.file_reader(f_test)
+#                 model_shap_plot(X_test, clf, method, dataset, f_test,name_classifiers,  dependence_feature=None)
+#                 test_score = accuracy_score(y_test, clf.predict(X_test))
+#                 res_table.loc[dataset, method] = round(test_score, 3)
+#
+#                 print(res_table)
+#                 name_summary_file = "summary_" + dataset + ".csv"
+#                 res_table.to_csv(results_dir / "summary" / name_summary_file)
+#                 if method in ["xgbs_no_encoding", "xgbs"]:
+#                     feature_importance = xgbs_feature_importance(clf, X_test)
+#                     to_csv(feature_importance, results_dir / "feature_importance" / f"feature_importance_{dataset}.csv")
+#                     print("save feature importance file")
+#                     ms = measurement(y_test, clf.predict(X_test))
+#                     ms_table.loc[dataset, f_test] = ms
+#
+#             except NoModelFound:
+#                 pass
+#
+#     res_table.sort_index(inplace=True)
+#     print(res_table)
+#     print(res_table.to_latex())
+#
+#     res_table.to_csv(results_dir/"summary.csv")
+#     to_csv(ms_table, results_dir / "xgbs_measurements" / "xgbs_measurements.csv")
+#
 
-def self_results_summary(method_split: str):
-    ms_table = pd.DataFrame(columns={"TPR", "TNR", "PPV", "NPV", "FPR", "FNR", "FDR","ACC"})
-    results_dir = ROOT_PATH / Path("Results")
-    test_dir = DATA_PATH_INTERACTIONS / "test" / method_split
-    train_dir = DATA_PATH_INTERACTIONS / "train"
-
-    methods = ['xgbs']
-    res_table: DataFrame = pd.DataFrame()
-    FeatureReader.reader_selection_parameter = "without_hot_encoding"
-    feature_reader = get_reader()
-
-    for f_test in test_dir.glob("*test*"):
-        f_stem = f_test.stem
-        dataset = f_stem.split(".csv")[0]
-        for method in methods:
-            print(f"test: {f_test}, method: {method}")
-            try:
-                dataset = dataset.replace("test", "train")
-                clf = get_presaved_clf(results_dir, dataset, method)
-                X_test, y_test = feature_reader.file_reader(f_test)
-                model_shap_plot(X_test, clf, method, dataset, f_test, dependence_feature=None)
-                test_score = accuracy_score(y_test, clf.predict(X_test))
-                res_table.loc[dataset, method] = round(test_score, 3)
-
-                print(res_table)
-                name_summary_file = "summary_" + dataset + ".csv"
-                res_table.to_csv(results_dir / "summary" / name_summary_file)
-                if method in ["xgbs_no_encoding", "xgbs"]:
-                    feature_importance = xgbs_feature_importance(clf, X_test)
-                    to_csv(feature_importance, results_dir / "feature_importance" / f"feature_importance_{dataset}.csv")
-                    print("save feature importance file")
-                    ms = measurement(y_test, clf.predict(X_test))
-                    ms_table.loc[dataset, f_test] = ms
-
-            except NoModelFound:
-                pass
-
-    res_table.sort_index(inplace=True)
-    print(res_table)
-    print(res_table.to_latex())
-
-    res_table.to_csv(results_dir/"summary.csv")
-    to_csv(ms_table, results_dir / "xgbs_measurements" / "xgbs_measurements.csv")
-
-
-def different_results_summary(method_split: str, model_dir: str, number_iteration):
+def different_results_summary(method_split: str, model_dir: str, number_iteration: int, name_classifier: str):
 
     ms_table = None
     results_dir = ROOT_PATH / Path("Results")
-    results_dir_models = ROOT_PATH / Path("Results") / model_dir
+    results_dir_models = ROOT_PATH / Path("Results/models") / model_dir
     test_dir = DATA_PATH_INTERACTIONS / "test" / method_split
     res_table: DataFrame = pd.DataFrame()
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
     feature_reader = get_reader()
-    clf_datasets = [f.stem.split("_xgbs")[0] for f in results_dir_models.glob("*_xgbs*model")]
-    method ='xgbs'
+
+    clf_datasets = [f.stem.split("_"+ name_classifier)[0] for f in results_dir_models.glob("*.model")]
+    method = name_classifier
     for clf_dataset in clf_datasets:
         for f_test in test_dir.glob("*test*"):
             f_stem = f_test.stem
@@ -194,36 +216,95 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
             try:
                     clf = get_presaved_clf(results_dir_models, clf_dataset, method)
                     X_test, y_test = feature_reader.file_reader(test_dir/f"{test_dataset}.csv")
-                    # X_test.drop(columns=['MRNA_Target_A_comp', 'MRNA_Target_C_comp', 'MRNA_Target_G_comp',
-                    #                      'MRNA_Target_U_comp', 'MRNA_Target_AA_comp', 'MRNA_Target_AC_comp',
-                    #                      'MRNA_Target_AG_comp', 'MRNA_Target_AU_comp',
-                    #                      'MRNA_Target_CA_comp', 'MRNA_Target_CC_comp', 'MRNA_Target_CG_comp',
-                    #                      'MRNA_Target_CU_comp',
-                    #                      'MRNA_Target_GA_comp', 'MRNA_Target_GC_comp', 'MRNA_Target_GG_comp',
-                    #                      'MRNA_Target_GU_comp',
-                    #                      'MRNA_Target_UA_comp', 'MRNA_Target_UC_comp', 'MRNA_Target_UG_comp',
-                    #                      'MRNA_Target_UU_comp'], inplace=True)
-
-                    # shap graph
-                    model_shap_plot(X_test, clf, method, clf_dataset, test_dataset, dependence_feature=None)
-
-                    # features importance graph
-                    plot_feature_importances(clf, X_test,clf_dataset, test_dataset)
 
                     # score predict
                     test_score = accuracy_score(y_test, clf.predict(X_test))
                     res_table.loc[clf_dataset, test_dataset] = round(test_score, 3)
 
-                    feature_importance = xgbs_feature_importance(clf, X_test)
-                    name_method = "model:" + clf_dataset.split("negative")[0] + "_" + "test:" + test_dataset.split("negative")[0]
-                    to_csv(feature_importance, results_dir / "feature_importance" / f"feature_importance_{name_method}.csv")
+                    # feature_importance = xgbs_feature_importance(clf, X_test)
+                    # name_method = "model:" + clf_dataset.split("negative")[0] + "_" + "test:" + test_dataset.split("negative")[0]
+                    # to_csv(feature_importance, results_dir / "feature_importance" / f"feature_importance_{name_method}.csv")
 
                     # save measures
-                    ms = measurement(y_test, clf.predict(X_test))
+                    if name_classifier == 'svm' or name_classifier == 'isolation_forest':
+                        # Get the scores for the testing dataset
+                        score = clf.score_samples(X_test)
+                        # Check the score for 2% of outliers
+                        score_threshold = np.percentile(score, 2)
+                        print(f'The customized score threshold for 2% of outliers is {score_threshold:.2f}')
+                        # Check the model performance at 2% threshold
+                        # prediction_1 = [0 if i < score_threshold else 1 for i in score]
+                        # # # Check the prediction performance
+                        # prediction_2 = [0 if i == -1 else 1 for i in clf.predict(X_test)]
+                        # prediction_1 = [0 if i < score_threshold else 1 for i in score]
+
+                        prediction = clf.predict(X_test)
+                        print("prediction_2:", Counter(clf.predict(X_test)))
+                        prediction[prediction == -1] = 0
+                        prediction[prediction == 1] = 1
+
+
+                        # y_test[y_test == 1] = -1
+                        # y_test[y_test == 0] = 1
+                        # y_test[y_test == -1] = 0
+
+
+
+
+                        print("true:", Counter(y_test))
+
+                        print('__________________________Results__________________________')
+                        # print('tn fp fn tp')
+                        # print("__________________________option 1__threshold________________________")
+                        # print(confusion_matrix(y_test, prediction_1).ravel())
+                        # print("__________________________option 2___________________________")
+                        # print(confusion_matrix(y_test, prediction_2).ravel())
+                        score = f1_score(y_test, prediction)
+                        print('F1 Score: %.3f' % score)
+                        precision = precision_score(y_test, prediction, average='binary')
+                        print('Precision: %.3f' % precision)
+                        recall = recall_score(y_test, prediction, average='binary')
+                        print('Recall: %.3f' % recall)
+
+
+                    else:
+                        prediction = clf.predict(X_test)
+                        # shap graph
+                        model_shap_plot(X_test, clf, method, clf_dataset, test_dataset,name_classifier, dependence_feature=None)
+                        # features importance graph
+                        plot_feature_importances(clf, X_test,clf_dataset, test_dataset, name_classifier)
+
+                    if name_classifier == 'isolation_forest':
+                        # features shap graph
+                        model_shap_plot(X_test, clf, method, clf_dataset, test_dataset,name_classifier, dependence_feature=None)
+
+                   #### ROC Curve ####
+                    # y_score = clf.score_samples(X_test)
+                    #
+                    # from sklearn.metrics import roc_curve
+                    # fpr, tpr, thresholds = roc_curve(y_test, y_score)
+                    # import matplotlib.pyplot as plt
+                    # plt.plot(fpr, tpr, 'k-', lw=2)
+                    # plt.xlabel('FPR')
+                    # plt.ylabel('TPR')
+                    # plt.show()
+                    ###################################################################
+
+                    ################# ONE CLASS SVM FEATURE IMPORTANCE ############
+
+
+                    ms = measurement(y_test, prediction)
+                    print("TNR:", ms['TNR'])
+                    # print(confusion_matrix(y_test, prediction).ravel())
+                    # print(Counter(prediction))
+                    # print(classification_report(y_test, prediction))
+
                     if ms_table is None:
                         ms_table = pd.DataFrame(columns=list(ms.keys()), dtype=object)
                     name_method = "model:" + clf_dataset.split("negative")[0] + "/" + "test:" + test_dataset.split("negative")[0]
                     ms_table.loc[name_method] = ms
+
+
 
             except NoModelFound:
                     pass
@@ -232,12 +313,13 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
     res_table.sort_index(axis=1, inplace=True)
 
     print(res_table)
-    to_csv(res_table, results_dir / "summary" / "diff_summary_stratify.csv")
-    to_csv(ms_table, results_dir / "xgbs_measurements" /f"measurement_summary_{number_iteration}.csv")
+    # to_csv(res_table, results_dir / "summary" / "diff_summary_stratify.csv")
+    print(name_classifier)
+    to_csv(ms_table, results_dir /"results_iterations" / name_classifier /f"measurement_summary_{number_iteration}.csv")
     print("END result test")
     return ms_table
 
 
 # different_results_summary(method_split="underSampling", model_dir="models_underSampling")
 
-# different_results_summary(method_split="stratify", model_dir="models_stratify")
+# different_results_summary(method_split="one_class_svm", model_dir="models_one_class_svm")

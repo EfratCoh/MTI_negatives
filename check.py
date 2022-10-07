@@ -15,6 +15,8 @@ def cc():
 
 def checkMockMirna():
     file_name = ROOT_PATH / "data/positive_interactions/positive_interactions_new/featuers_step/"
+    file_name = ROOT_PATH / "data/positive_interactions/positive_interactions_merge/"
+
     tmp_base = ROOT_PATH / "generate_interactions/mockMirna/"
     features_mock = ROOT_PATH / "data/negative_interactions/mockMirna"
     files = list(features_mock.glob('*features*.csv'))
@@ -44,6 +46,7 @@ def checkMockMirna():
         df_neg_duplex = read_csv(duplex_file)
         df_neg_normalization = read_csv(normalization_file)
 
+        print(df_pos.shape[0] == df_mock.shape[0])
         print(df_pos.shape[0] == df_neg_features.shape[0])
         print("neg_mock_features", df_neg_features.shape[0])
         print("pos", df_pos.shape[0])
@@ -472,10 +475,116 @@ def checkMockMrna():
 # s_neg = read_csv("/sise/home/efrco/efrco-master/generate_interactions/mockMirna/qclash_melanoma_human_ViennaDuplex_features_negative.csv")
 # print("s_neg: ", s_neg.shape)
 
-def insert_mock_site(full_mrna, start, end, site):
-    full_mrna = full_mrna[:start] + site + full_mrna[end + 1:]
+# def insert_mock_site(full_mrna, start, end, site):
+#     full_mrna = full_mrna[:start] + site + full_mrna[end + 1:]
+#
+#     return full_mrna
+#
+#
+# print(insert_mock_site("efrat",1,2,"mmm"))
 
-    return full_mrna
+def null_in_dataset_h3():
+    my = read_csv(
+        "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+    C1 = my[my.isna().any(axis=1)]
+    my = read_csv(
+        "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+    C1 = my[my.isna().any(axis=1)]
+    my_after_drop_na = my.dropna()
+
+    # GILAD
+    original = read_csv(
+        "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_merge/darnell_human_ViennaDuplex_features.csv")
+    C2 = original[original.isna().any(axis=1)]
+    # GILAD
+    original = read_csv(
+        "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_merge/darnell_human_ViennaDuplex_features.csv")
+    original.drop(columns=['miRNAMatchPosition_21','miRNAMatchPosition_22'], inplace=True)
+    C2 = original[original.isna().any(axis=1)]
+    C2['size'] = C2['miRNA sequence'].apply(lambda x: len(x))
+    print(C1.shape)
 
 
-print(insert_mock_site("efrat",1,2,"mmm"))
+
+def null_in_dataset_tarBase():
+    my = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_human_negative_features.csv")
+    C1 = my[my.isna().any(axis=1)]
+    my_after_drop_na = my.dropna()
+    cols = my.columns[my.isna().any()].tolist()
+    print(cols)
+    path = "/sise/home/efrco/efrco-master/tarbasenull.csv"
+    to_csv(C1, path)
+
+
+
+# null_in_dataset_tarBase()
+
+
+
+
+# file_name = ROOT_PATH / "data/positive_interactions/positive_interactions_merge"
+# files = list(file_name.glob('**/*.csv'))
+# for p in files:
+#     df = read_csv(p)
+#     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     print(p)
+#     print(df.shape)
+#     C1 = df[df.isna().any(axis=1)]
+#     print(C1.shape)
+
+#
+# import Classifier.FeatureReader as FeatureReader
+# from Classifier.FeatureReader import get_reader
+#
+# FeatureReader.reader_selection_parameter = "without_hot_encoding"
+#
+# feature_reader = get_reader()
+#
+# X, y = feature_reader.file_reader("/sise/home/efrco/efrco-master/data/test/one_class_svm/non_overlapping_sites_darnell_human_ViennaDuplex_negativeone_class.csv")
+# print("f")
+
+# Example of a confusion matrix in Python
+# from sklearn.metrics import confusion_matrix
+#
+# expected = [1,0,1,1]
+# predicted = [0,1,1,1]
+# results = confusion_matrix(expected, predicted)
+# print(results.ravel())
+# print("(tn, fp, fn, tp)")
+# # print(results)
+# TP = results[0][0]
+# FP = results[0][1]
+# FN = results[1][0]
+# TN = results[1][1]
+# print("TP:", TP)
+# print("FP:", FP)
+# print("FN:", FN)
+# print("TN:", TN)
+# import seaborn as sns
+#
+# ax = sns.heatmap(results, annot=True, cmap='Blues')
+#
+# ax.set_title('Seaborn Confusion Matrix with labels\n\n');
+# ax.set_xlabel('\nPredicted Values')
+# ax.set_ylabel('Actual Values ');
+#
+# ## Ticket labels - List must be in alphabetical order
+# ax.xaxis.set_ticklabels(['False','True'])
+# ax.yaxis.set_ticklabels(['False','True'])
+#
+# ## Display the visualization of the Confusion Matrix.
+# plt.show()
+
+
+# path ="/sise/home/efrco/efrco-master/data/negative_interactions/mockMrna/mockMrna_nucleotides_method1_darnell_human_ViennaDuplex_negative_features.csv"
+path = "/sise/home/efrco/efrco-master/data/negative_interactions/mockMrna/mockMrna_denucleotides_method3_darnell_human_ViennaDuplex_negative_features.csv"
+path = "/sise/home/efrco/efrco-master/data/negative_interactions/mockMirna/mockMirna_darnell_human_ViennaDuplex_negative_features.csv"
+path = "/sise/home/efrco/efrco-master/data/negative_interactions/non_overlapping_sites/non_overlapping_sites_darnell_human_ViennaDuplex_negative_features.csv"
+path = "/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_human_negative_features.csv"
+neg = read_csv(path)
+neg = neg[neg.isna().any(axis=1)]
+cols = neg.columns[neg.isna().any()].tolist()
+print(cols)
+print(neg.shape)
+path_output = "/sise/home/efrco/efrco-master/denucleotides_method2_null_neg.csv"
+to_csv(neg, path_output)

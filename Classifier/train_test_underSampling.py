@@ -12,8 +12,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from multiprocessing import Process
 from consts.global_consts import DATA_PATH, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS
-from utils.utilsfile  import read_csv, to_csv
+from utils.utilsfile import read_csv, to_csv
 
+# from utilsfile  import read_csv, to_csv
 
 
 
@@ -38,7 +39,7 @@ def imbalanced_partation(pos, pos_train, pos_test, input_file_negative, output_d
     print(Counter(y))
 
     # define undersample strategy
-    undersample = RandomUnderSampler(sampling_strategy='majority')
+    undersample = RandomUnderSampler(sampling_strategy='majority', random_state=random_state)
 
     # fit and apply the transform
     X_over, y_over = undersample.fit_resample(X, y)
@@ -83,20 +84,20 @@ def split_train_test(dataset_positive_name, random_state):
     pos.insert(0, "Label", 1)
     print("pos", data_set_positive, pos.shape)
 
-    pos_train, pos_test = train_test_split(pos, test_size=0.2, random_state=19)
+    pos_train, pos_test = train_test_split(pos, test_size=0.2, random_state=random_state)
     for method_dir in dir.iterdir():
         print(method_dir)
-
+        list_method = ['mockMirna', 'non_overlapping_sites']
         for dataset_file_neg in method_dir.glob("*features*"):
             # Only take the correct mock file
-            if "mockMirna" in method_dir.stem:
-                correct_dataset = "mockMirna_" + dataset_positive_name.split("_features")[0] + "_negative_features"
+
+            if any(method in method_dir.stem for method in list_method):
+                correct_dataset =  dataset_positive_name.split("_features")[0] + "_negative_features"
                 list_split = dataset_file_neg.stem.split("/")
                 list_split = [str(s) for s in list_split]
-                if correct_dataset not in list_split:
+                if correct_dataset not in list_split[0]:
                     continue
-            imbalanced_partation(pos, pos_train, pos_test, dataset_file_neg, train_test_dir, 0.2, 19)
-
+            imbalanced_partation(pos, pos_train, pos_test, dataset_file_neg, train_test_dir, 0.2, random_state)
 
 
 def test_size():
@@ -106,11 +107,14 @@ def test_size():
     result = pd.DataFrame()
     for dataset_file in dir.glob("*test*"):
         dataset = str(dataset_file.stem).split("_test")[0]
+        print('#####################################################################')
+        print(dataset)
         for suffix in ["test_underSampling_method"]:
             dir = DATA_PATH_INTERACTIONS / "test/underSampling"
             d = read_csv(dir / f"{dataset}_{suffix}.csv")
             suffix = suffix.replace("test_", "")
             result.loc[dataset, suffix] = int(d.shape[0])
+            print(Counter(d['Label']))
     result.sort_index(inplace=True)
     result = result.astype('int')
     print(result)
@@ -125,11 +129,15 @@ def train_size():
     result = pd.DataFrame()
     for dataset_file in dir.glob("*train*"):
         dataset = str(dataset_file.stem).split("_train")[0]
+        print('#####################################################################')
+        print(dataset)
         for suffix in ["train_underSampling_method"]:
             dir = DATA_PATH_INTERACTIONS / "train/underSampling"
         d = read_csv(dir / f"{dataset}_{suffix}.csv")
         suffix = suffix.replace("train_", "")
         result.loc[dataset, suffix] = int(d.shape[0])
+        print(Counter(d['Label']))
+
     result.sort_index(inplace=True)
     result = result.astype('int')
     print(result)

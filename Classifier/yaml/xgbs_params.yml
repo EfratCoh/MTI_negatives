@@ -6,34 +6,34 @@ xgbs:
     colsample_bytree:
     - 0.6
     - 0.8
-    - 1.0
+#    - 1.0
     eta:
     - 0.1
     - 0.02
-    - 0.3
-    - 0.7
+#    - 0.3
+#    - 0.7
     gamma:
     - 0.5
     - 1
     - 1.5
-    - 2
-    - 5
+#    - 2
+#    - 5
     lambda:
     - 1
     - 2
     max_depth:
     - 2
     - 10
-    - 2
+    - 4
     min_child_weight:
     - 1
     - 5
-    - 10
+#    - 10
     n_jobs:
     - -1
     objective:
     - binary:logistic
     subsample:
     - 0.6
-    - 0.8
-    - 1.0
+#    - 0.8
+#    - 1.0

@@ -10,8 +10,10 @@ from utils.utilsfile import get_subsequence_by_coordinates
 
 
 def seq_composition(s: str, prefix: str) -> Dict[str, float]:
-    if len(s) < 1:
-        return {}
+
+    # make change
+    # if len(s) < 1:
+    #     return {}
     # monomer
     keys = ["".join(p) for p in product('ACGU', repeat=1)]
     monomer_dict = dict.fromkeys(keys, 0)
@@ -20,8 +22,8 @@ def seq_composition(s: str, prefix: str) -> Dict[str, float]:
         monomer_dict[k]+=1
     monomer = sum(monomer_dict.values())
 
-    if len(s) < 2:
-        return {}
+    # if len(s) < 2:
+    #     return {}
     #dimer
     keys = ["".join(p) for p in product('ACGU', repeat=2)]
     if s.find("#")== True:
@@ -32,6 +34,11 @@ def seq_composition(s: str, prefix: str) -> Dict[str, float]:
         dimer_dict[k]+=1
     dimer = sum(dimer_dict.values())
 
+    # make change
+    if monomer == 0:
+        monomer = 1
+    if dimer == 0:
+        dimer = 1
     result = {f"{prefix}_{k}_comp": round(float(v) / monomer, 4) for k, v in monomer_dict.items()}
     result.update({f"{prefix}_{k}_comp": round(float(v) / dimer, 4) for k, v in dimer_dict.items()})
     return result
@@ -46,16 +53,23 @@ class MrnaFeatures(Features):
         # self._features_dict["target_composition"] = seq_composition(self._duplex.site[::-1], "MRNA_Target")
 
         try:
-            mrna_up = get_subsequence_by_coordinates(self._region_sequence, self._start - 71, self._start - 1)
+            # make change
+            mrna_up = get_subsequence_by_coordinates(self._region_sequence, max(self._start - 71, 0), self._start - 1)
             self._features_dict["flanking_up_composition"] = seq_composition(mrna_up, "MRNA_Up")
         except ValueError:
-            self._features_dict["flanking_up_composition"] = {}
+            # self._features_dict["flanking_up_composition"] = {}
+            self._features_dict["flanking_up_composition"] = seq_composition("", "MRNA_Up")
 
         try:
-            mrna_down = get_subsequence_by_coordinates(self._region_sequence, self._end + 1, self._end + 71)
+            # make change
+            mrna_down = get_subsequence_by_coordinates(self._region_sequence, self._end + 1, min(self._end + 71,len(self._region_sequence)))
+            if len(mrna_down) == 1:
+                print("ffff")
             self._features_dict["flanking_down_composition"] = seq_composition(mrna_down, "MRNA_Down")
         except ValueError:
-            self._features_dict["flanking_down_composition"] = {}
+            # self._features_dict["flanking_down_composition"] = {}
+            self._features_dict["flanking_down_composition"] = seq_composition("", "MRNA_Down")
+
 
 
 

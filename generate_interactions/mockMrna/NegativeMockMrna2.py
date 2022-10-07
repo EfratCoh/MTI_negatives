@@ -19,6 +19,11 @@ import mirna_utils.mirbase as MBU
 from multiprocessing import Process
 from consts.global_consts import CONFIG
 from duplex.Duplex import Duplex
+from ushuffle import shuffle, Shuffler
+
+
+""" In this method, we generate mockMrna(by shuffle the +-100 around the original site.
+  Then, we calculate the duplex of the mockMrna with the original mirna"""
 
 
 class MockMRNA(object):
@@ -27,47 +32,74 @@ class MockMRNA(object):
         self.tmp_dir = tmp_dir
         self.min_num_of_pairs = min_num_of_pairs
 
-    def generate_mrna_mock(self, mrna, th=5):
+    def generate_mrna_mock_denucleotides(self, mrna, th=5):
 
         seq = list(mrna.replace('T', 'U').upper())
+        seq = ''.join(seq)
+        seq = seq.encode('utf-8')
 
         num_shuffle = 0
         equal_to_itself = True
         while equal_to_itself:
-            seq_couple = [seq[x:x + 2] for x in range(0, len(seq), 2)]
-            random.shuffle(seq_couple)
+            # seq_couple = [seq[x:x + 2] for x in range(0, len(seq), 2)]
+            # random.shuffle(seq_couple)
+            shuffler = Shuffler(seq, 2)
+            seq_byte = shuffler.shuffle()
+            seq_str = seq_byte.decode("utf-8")
             num_shuffle += 1
             if num_shuffle % 10000 == 0:
                 print(num_shuffle)
             if num_shuffle > 100000:
                 break
-            flat_seq_mock = [item for sublist in seq_couple for item in sublist]
-            equal_to_itself = flat_seq_mock == seq
+            # flat_seq_mock = [item for sublist in seq_couple for item in sublist]
+            equal_to_itself = seq_str == seq
 
-
-        mrna_mock = ''.join(flat_seq_mock)
+        mrna_mock = ''.join(seq_str)
         return mrna_mock
 
-    # def generate_mrna_mock(self, mrna, th=5):
-        #
-        # seq = list(mrna.replace('T', 'U').upper())
-        # seq_original = list(mrna.replace('T', 'U').upper())
-        #
-        # num_shuffle = 0
-        # equal_to_itself = True
-        # while equal_to_itself:
-        #     random.shuffle(seq)
-        #
-        #     num_shuffle += 1
-        #     if num_shuffle % 10000 == 0:
-        #         print(num_shuffle)
-        #     if num_shuffle > 100000:
-        #         break
-        #     equal_to_itself = seq_original == seq
-        #
-        # mrna_mock = ''.join(seq)
-        # return mrna_mock
+    def generate_mrna_mock_nucleotides_ushuffle(self, mrna, th=5):
 
+        seq = list(mrna.replace('T', 'U').upper())
+        seq = ''.join(seq)
+        seq = seq.encode('utf-8')
+
+        num_shuffle = 0
+        equal_to_itself = True
+        while equal_to_itself:
+            # seq_couple = [seq[x:x + 2] for x in range(0, len(seq), 2)]
+            # random.shuffle(seq_couple)
+            shuffler = Shuffler(seq, 1)
+            seq_byte = shuffler.shuffle()
+            seq_str = seq_byte.decode("utf-8")
+            num_shuffle += 1
+            if num_shuffle % 10000 == 0:
+                print(num_shuffle)
+            if num_shuffle > 100000:
+                break
+            # flat_seq_mock = [item for sublist in seq_couple for item in sublist]
+            equal_to_itself = seq_str == seq
+
+        mrna_mock = ''.join(seq_str)
+        return mrna_mock
+
+    # def generate_mrna_mock_nucleotides(self, mrna, th=5):
+    #
+    #     seq = list(mrna.replace('T', 'U').upper())
+    #     seq_original = list(mrna.replace('T', 'U').upper())
+    #
+    #     num_shuffle = 0
+    #     equal_to_itself = True
+    #     while equal_to_itself:
+    #         random.shuffle(seq)
+    #         num_shuffle += 1
+    #         if num_shuffle % 10000 == 0:
+    #             print(num_shuffle)
+    #         if num_shuffle > 100000:
+    #             break
+    #         equal_to_itself = seq_original == seq
+    #
+    #     mrna_mock = ''.join(seq)
+    #     return mrna_mock
     def valid_negative_seq(self, mir, mrna):
 
         duplex_cls: Duplex = DUPLEX_DICT['ViennaDuplex']
@@ -89,7 +121,7 @@ class MockMRNA(object):
         full_mrna = full_mrna[:start] + site + full_mrna[end + 1:]
         return full_mrna
 
-    def generate_negative_seq(self, original_mirna, full_mrna_original, site, start, end, num_of_tries=10000):
+    def generate_negative_seq(self, original_mirna, full_mrna_original, site, start, end, name_shuffle, num_of_tries=10000):
 
         for i in range(num_of_tries):
 
@@ -98,7 +130,10 @@ class MockMRNA(object):
             new_start, new_end = get_substring_index(full_mrna_original, site_surrounding100)
 
             # Shuffle the sequence
-            mock_sub_mrna = self.generate_mrna_mock(site_surrounding100)
+            if name_shuffle == 'nucleotides':
+                mock_sub_mrna = self.generate_mrna_mock_nucleotides_ushuffle(site_surrounding100)
+            else:
+                mock_sub_mrna = self.generate_mrna_mock_denucleotides(site_surrounding100)
 
             # Insert the mock site to the original mrna
             full_mrna = self.insert_mock_site(full_mrna_original, new_start, new_end, mock_sub_mrna)
@@ -125,7 +160,7 @@ class MockMRNA(object):
         return False, {}
 
 
-def worker(organism, fin, fout_name, tmp_dir):
+def worker(organism, fin, fout_name, tmp_dir,name_shuffle):
 
     print("##################NEW FILE#################################")
     print(fin)
@@ -143,7 +178,7 @@ def worker(organism, fin, fout_name, tmp_dir):
         print(f"$$$$$$$$$$$$$$$ {i} $$$$$$$$$$$$$$$$$$4")
         i += 1
         valid, properties = ns.generate_negative_seq(row['miRNA sequence'], row['sequence'],
-                                                     row['site'], row['start'], row['end'])
+                                                     row['site'], row['start'], row['end'], name_shuffle)
 
         if not valid:
             continue
@@ -175,18 +210,18 @@ def worker(organism, fin, fout_name, tmp_dir):
     print("save:", fout)
 
 
-def main():
+def main(name_shuffle):
     file_name = ROOT_PATH / "data/positive_interactions/positive_interactions_merge"
     tmp_base = ROOT_PATH / "generate_interactions/mockMrna/"
     print("tmp:", tmp_base)
     files = list(file_name.glob('**/*.csv'))
     for p in files:
-        fout_name = p.name.split('.csv')[0] + '.csv'
-        if fout_name == "darnell_human_ViennaDuplex_features.csv":
-            worker('hsa', p, fout_name, tmp_base)
+        fout_name = p.name.split('.csv')[0] + "_" + name_shuffle + '_method2.csv'
+        if "darnell_human" in fout_name:
+            worker('hsa', p, fout_name, tmp_base, name_shuffle)
 
 
-main()
+# main()
 
 
 

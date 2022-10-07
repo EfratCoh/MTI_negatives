@@ -31,7 +31,7 @@ def full_pipline(name_of_method: str, name_of_file: str, duplex=duplex_negative)
     print("###############Site#############")
 
     name_of_file = name_of_file_primary + "_site.csv"
-    fout = fout_primary /  name_of_file
+    fout = fout_primary / name_of_file
     get_site_from_extended_site(fin, fout)
 
     print("###############Normaliztion#############")
@@ -56,44 +56,29 @@ def full_pipline(name_of_method: str, name_of_file: str, duplex=duplex_negative)
 
 ##### Prepar files#######
 
-# mock mrna#
+# method 1 - tarBase#
 # from generate_interactions.tarBase import reader
 # # reader.run("generate_interactions/tarBase/tarBase_human_negative.csv")
+# full_pipline("tarBase", "human_features_negative")
 
+# method 2 - mockMirna#
 # from generate_interactions.mockMirna import NegativeSamples
 # NegativeSamples.main()
-# full_pipline("mockMirna", "qclash_melanoma_human_ViennaDuplex_features_negative")
-# full_pipline("tarBase", "human_features_negative")
 # full_pipline("mockMirna", "darnell_human_ViennaDuplex_features_negative")
 # full_pipline("mockMirna", "human_mapping_ViennaDuplex_features_negative")
 # full_pipline("mockMirna", "unambiguous_human_ViennaDuplex_features_negative")
+# full_pipline("mockMirna", "qclash_melanoma_human_ViennaDuplex_features_negative")
 
-# non_overlapping_sites
+
+# Method 3 - non_overlapping_sites #
 # from generate_interactions.non_overlapping_sites import generate
-# generate.main()
-#
-# full_pipline("non_overlapping_sites", "darnell_human_ViennaDuplex_features_negative", duplex_positive)
-
-####### mockMrna first approach ######
-
-# from generate_interactions.mockMrna import NegativeMockMrna
-# NegativeMockMrna.main()
-
-# full_pipline("mockMrna", "darnell_human_ViennaDuplex_features_negative")
-
-
-####### mockMrna second approach ######
-
-# from pipeline_steps.duplex_step import duplex as duplex_positive
-# from generate_interactions.mockMrna import NegativeMockMrna2
-# NegativeMockMrna2.main()
-#
-# full_pipline("mockMrna", "darnell_human_ViennaDuplex_features_negative", duplex_positive)
-
-####### mockMrna third approach ######
-
 from pipeline_steps.duplex_step import duplex as duplex_positive
-# from generate_interactions.mockMrna import NegativeMockMrna3
-# NegativeMockMrna3.main()
+# generate.main()
+# full_pipline("non_overlapping_sites", "darnell_human_ViennaDuplex_features_negative", duplex_positive)
+# full_pipline("non_overlapping_sites", "human_mapping_ViennaDuplex_features_negative", duplex_positive)
+# full_pipline("non_overlapping_sites", "unambiguous_human_ViennaDuplex_features_negative", duplex_positive)
+# full_pipline("non_overlapping_sites", "qclash_melanoma_human_ViennaDuplex_features_negative", duplex_positive)
 
-full_pipline("mockMrna", "darnell_human_ViennaDuplex_features_negative", duplex_positive)
+# ####method 4 - mockMrna  ######
+from generate_interactions.mockMrna.run_methods import run
+run()

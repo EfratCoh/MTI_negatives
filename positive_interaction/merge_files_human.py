@@ -122,6 +122,11 @@ def filter(result) -> DataFrame:
 
     df = df[df['sequence'].apply(lambda x: len(x)) > 40]
 
+    # df = df[df['miRNA sequence'].apply(lambda x: len(x)) > 21]
+    df.drop(columns=['miRNAMatchPosition_21','miRNAMatchPosition_22'], inplace=True)
+
+    df = df[~df.isna().any(axis=1)]
+
     df.reset_index(drop=True, inplace=True)
     df.reset_index(inplace=True)
     return df
@@ -129,26 +134,26 @@ def filter(result) -> DataFrame:
 
 def processing():
 
-    # # Dataset one
+    # Dataset one
     # result_h1 = merge("human_mapping_ViennaDuplex_features")
     # result_h1 = filter(result_h1)
     # print("H1 after filter:", result_h1.shape)
     # save(result_h1, "human_mapping_ViennaDuplex_features.csv")
-
-
-    # Dataset two
+    #
+    #
+    # # Dataset two
     # result_h2 = merge("unambiguous_human_ViennaDuplex_features")
     # result_h2 = filter(result_h2)
     # print("H2 after filter:", result_h2.shape)
     # save(result_h2, "unambiguous_human_ViennaDuplex_features.csv")
-
-    # # Data set three
+    #
+    # # # Data set three
     # result_h3 = merge("darnell_human_ViennaDuplex_features")
     # result_h3 = filter(result_h3)
     # print("H3 after filter:", result_h3.shape)
     # save(result_h3, "darnell_human_ViennaDuplex_features.csv")
 
-    # Data set four
+    # Dataset four
     fill_full_name_mirRNA("qclash_melanoma_human_ViennaDuplex_features")
     result_h4 = merge_q_clash("qclash_melanoma_human_ViennaDuplex_features")
     save(result_h4, "qclash_melanoma_human_ViennaDuplex_features.csv")

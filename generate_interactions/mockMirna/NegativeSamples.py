@@ -182,6 +182,9 @@ def main():
 # main()
 
 
+df = read_csv(MIRBASE_FILE)
+print(df)
+
 
 
 
