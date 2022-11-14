@@ -200,8 +200,9 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
 
     ms_table = None
     results_dir = ROOT_PATH / Path("Results")
-    results_dir_models = ROOT_PATH / Path("Results/models") / model_dir
-    test_dir = DATA_PATH_INTERACTIONS / "test" / method_split
+    number_iteration = str(number_iteration)
+    results_dir_models = ROOT_PATH / Path("Results/models") / model_dir / number_iteration
+    test_dir = DATA_PATH_INTERACTIONS / "test" / method_split / number_iteration
     res_table: DataFrame = pd.DataFrame()
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
     feature_reader = get_reader()
@@ -243,14 +244,6 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
                         prediction[prediction == -1] = 0
                         prediction[prediction == 1] = 1
 
-
-                        # y_test[y_test == 1] = -1
-                        # y_test[y_test == 0] = 1
-                        # y_test[y_test == -1] = 0
-
-
-
-
                         print("true:", Counter(y_test))
 
                         print('__________________________Results__________________________')
@@ -290,7 +283,33 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
                     # plt.show()
                     ###################################################################
 
-                    ################# ONE CLASS SVM FEATURE IMPORTANCE ############
+                    # precision recall curve
+                    from sklearn.metrics import precision_recall_curve
+                    # from sklearn.metrics import f1_score
+                    from sklearn.metrics import auc
+                    from matplotlib import pyplot
+
+                    # predict probabilities
+                    # lr_probs = clf.decision_function(X_test)
+                    # # keep probabilities for the positive outcome only
+                    # lr_probs = lr_probs[:, 1]
+                    # # predict class values
+                    # yhat = clf.predict(X_test)
+                    # lr_precision, lr_recall, _ = precision_recall_curve(y_test, lr_probs)
+                    # lr_f1, lr_auc = f1_score(y_test, yhat), auc(lr_recall, lr_precision)
+                    # # summarize scores
+                    # print('Logistic: f1=%.3f auc=%.3f' % (lr_f1, lr_auc))
+                    # # plot the precision-recall curves
+                    # no_skill = len(y_test[y_test == 1]) / len(y_test)
+                    # pyplot.plot([0, 1], [no_skill, no_skill], linestyle='--', label='No Skill')
+                    # pyplot.plot(lr_recall, lr_precision, marker='.', label='Logistic')
+                    # # axis labels
+                    # pyplot.xlabel('Recall')
+                    # pyplot.ylabel('Precision')
+                    # # show the legend
+                    # pyplot.legend()
+                    # # show the plot
+                    # pyplot.show()
 
 
                     ms = measurement(y_test, prediction)
@@ -314,7 +333,7 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
 
     print(res_table)
     # to_csv(res_table, results_dir / "summary" / "diff_summary_stratify.csv")
-    print(name_classifier)
+    # print(name_classfier)
     to_csv(ms_table, results_dir /"results_iterations" / name_classifier /f"measurement_summary_{number_iteration}.csv")
     print("END result test")
     return ms_table

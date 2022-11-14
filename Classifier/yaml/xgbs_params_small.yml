@@ -15,7 +15,7 @@ xgbs:
     - 1
     max_depth:
     - 2
-    - 4
+#    - 4
     min_child_weight:
     - 1
     n_jobs:

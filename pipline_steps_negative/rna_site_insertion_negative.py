@@ -51,9 +51,11 @@ def get_site_from_extended_site(fin: str, fout:str):
                                                   'start', 'site'),
                                  axis=1)
 
-    df["site"] = df.apply(func=get_wrapper(get_subsequence_by_coordinates,
-                                           "full_mrna", "start", "end"),axis=1)
+    # df["site"] = df.apply(func=get_wrapper(get_subsequence_by_coordinates,
+    #                                        "full_mrna", "start", "end", extra_chars=SITE_EXTRA_CHARS),axis=1)
 
+    df["site"] = df.apply(func=get_wrapper(get_subsequence_by_coordinates,
+                                           "full_mrna", "start", "end"), axis=1)
     to_csv(df, Path(fout))
     logger.info(f"finish the site sequence insertion to {fin}")
 

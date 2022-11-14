@@ -102,7 +102,7 @@ class ClassifierWithGridSearch(object):
         for clf_name, conf in training_config.items():
             key_classifier = (list(self.clf_dict.keys())[0])
             if conf["run"] and clf_name == key_classifier:
-                self.train_one_conf(clf_name, conf, scoring="roc_auc")
+                self.train_one_conf(clf_name, conf, scoring="accuracy")
 
 
 def worker(dataset_file, results_dir, yaml_file):
@@ -111,15 +111,15 @@ def worker(dataset_file, results_dir, yaml_file):
     return
 
 
-def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_method):
+def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_method, number_iteration):
     logger.info("starting self_fit")
     logger.info(f"params: {[feature_mode, yaml_file, first_self, last_self]}")
 
     FeatureReader.reader_selection_parameter = feature_mode
-    csv_dir = DATA_PATH_INTERACTIONS / "train" / name_method
+    csv_dir = DATA_PATH_INTERACTIONS / "train" / name_method / number_iteration
     files = list(csv_dir.glob('**/*.csv'))
     for f in files:
-        results_dir = ROOT_PATH / "Results/models" / dir_method
+        results_dir = ROOT_PATH / "Results/models" / dir_method / number_iteration
         logger.info(f"results_dir = {results_dir}")
         logger.info(f"start dataset = {f}")
         worker(f, results_dir=results_dir, yaml_file=yaml_file)
@@ -127,10 +127,11 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
     logger.info("finish self_fit")
 
 
-def build_classifiers_svm():
+def build_classifiers_svm(number_iteration):
+    number_iteration = str(number_iteration)
     yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/one_class_params.yml"
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
-    self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="one_class_svm", dir_method="models_one_class_svm")
+    self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="one_class_svm", dir_method="models_one_class_svm",number_iteration=number_iteration)
     print("END main_primary")
 
 # build_classifiers()

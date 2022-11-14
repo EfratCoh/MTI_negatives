@@ -6,20 +6,20 @@ import pandas as pd
 from collections import Counter
 
 
-def split_train_one_class(method_split_source, random_state):
+def split_train_one_class(method_split_source, random_state,  number_split):
     csv_dir = DATA_PATH_INTERACTIONS / "train" / method_split_source
     files = list(csv_dir.glob('**/*.csv'))
-    dir_results = DATA_PATH_INTERACTIONS / "train" / 'one_class_svm'
+    dir_results = DATA_PATH_INTERACTIONS / "train" / 'one_class_svm' / str(number_split)
 
     for f in files:
         cols = []
         X_test = read_csv(f)
-        pos = X_test[X_test['Label'] == 1]
-        neg = X_test[X_test['Label'] == 0]
-        # print(pos.shape)
-        print("before:" , neg.shape)
-        neg = neg[neg.isna().any(axis=1)]
-        print("after:" , neg.shape)
+        # pos = X_test[X_test['Label'] == 1]
+        # neg = X_test[X_test['Label'] == 0]
+        # # print(pos.shape)
+        # print("before:" , neg.shape)
+        # neg = neg[neg.isna().any(axis=1)]
+        # print("after:" , neg.shape)
 
         # cols = neg.columns[neg.isna().any()].tolist()
         # print(cols)
@@ -32,27 +32,29 @@ def split_train_one_class(method_split_source, random_state):
         out_results = dir_results / dataset
 
         # df_new = df_new.dropna()
-        pos = df_new[df_new['Label'] == 1]
-        neg = df_new[df_new['Label'] == 0]
-        print(pos.shape)
-        print(neg.shape)
+        # pos = df_new[df_new['Label'] == 1]
+        # neg = df_new[df_new['Label'] == 0]
+        # print(pos.shape)
+        # print(neg.shape)
         print("#################################################")
         # df_new.drop(columns=["Label"], inplace=True)
         to_csv(df_new, out_results)
 
-def split_test_one_class(method_split_source, random_state):
+def split_test_one_class(method_split_source, random_state,  number_split):
     csv_dir = DATA_PATH_INTERACTIONS / "test" / method_split_source
     files = list(csv_dir.glob('**/*.csv'))
-    dir_results = DATA_PATH_INTERACTIONS / "test" / 'one_class_svm'
+    dir_results = DATA_PATH_INTERACTIONS / "test" / 'one_class_svm' / str(number_split)
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
 
     for f in files:
         X_test = read_csv(f)
-        pos = X_test[X_test['Label'] == 1]
-        neg = X_test[X_test['Label'] == 0]
-        # print(pos.shape)
+        # pos = X_test[X_test['Label'] == 1]
+        # neg = X_test[X_test['Label'] == 0]
+        # # print(pos.shape)
         # print(neg.shape)
-        neg = neg[neg.isna().any(axis=1)]
+        # neg = neg[neg.isna().any(axis=1)]
+        # print(neg.shape)
+
         # cols = neg.columns[neg.isna().any()].tolist()
         # path = "/sise/home/efrco/efrco-master/enull.csv"
         # to_csv(C1, path)
@@ -63,8 +65,19 @@ def split_test_one_class(method_split_source, random_state):
         out_results = dir_results / dataset
         # df_new.drop(columns=["Label"], inplace=True)
         # df_new = df_new.dropna()
-
+        # pos = df_new[df_new['Label'] == 1]
+        # neg = df_new[df_new['Label'] == 0]
+        # print(pos.shape)
+        # print(neg.shape)
         to_csv(df_new, out_results)
+
+def split_train_test_one_class(method_split_source, random_state, number_split):
+    split_train_one_class(method_split_source=method_split_source, random_state=random_state, number_split=number_split)
+    split_test_one_class(method_split_source= method_split_source, random_state=random_state, number_split=number_split)
+
+
+
+
 
 # def split_test_one_class(method_split_source, random_state):
 #     csv_dir = DATA_PATH_INTERACTIONS / "test" / method_split_source
@@ -83,10 +96,11 @@ def split_test_one_class(method_split_source, random_state):
 #         df_new = df_new.drop(df_new[df_new['Label'] == 0].sample(frac=.8, random_state=random_state).index)
 #         dataset = str(f.stem).split('/')[-1].split('_features')[0] + "_test_one_class.csv"
 #         out_results = dir_results / dataset
-#         to_csv(df_new, out_results)
 
-# split_train_one_class(method_split_source='underSampling', random_state=1)
-# split_test_one_class(method_split_source='underSampling', random_state=1)
+        # to_csv(df_new, out_results)
+
+# split_train_one_class(method_split_source='underSampling', random_state=1, number_split=1)
+# split_test_one_class(method_split_source='underSampling', random_state=1, number_split=1)
 # split_train_one_class(method_split_source='underSampling', random_state=1)
 
 

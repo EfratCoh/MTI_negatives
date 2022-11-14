@@ -10,6 +10,7 @@
             <path value="file://$PROJECT_DIR$/consts" />
             <path value="file://$PROJECT_DIR$/Classifier" />
             <path value="file://$PROJECT_DIR$/utils" />
+            <path value="file://$PROJECT_DIR$/pipline_steps_negative" />
           </resourceRoots>
         </entryData>
       </entry>

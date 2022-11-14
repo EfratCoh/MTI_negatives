@@ -95,7 +95,8 @@ if __name__ == '__main__':
     # print(mirna_good == mirna_first2)
     #
     #
-    # dp = ViennaDuplex.fromChimera(mirna_first, target)
+    dp = ViennaDuplex.fromChimera(mirna_first, target)
+    print(dp.site)
     # print("canon full:", dp.canonical_seed)
     # print("non canon full:", dp.noncanonical_seed)
     #

@@ -4,7 +4,7 @@ import pandas as pd
 from numpy import int64
 from pandas import DataFrame
 from pathlib import Path
-from consts.global_consts import MERGE_DATA, ROOT_PATH, BIOMART_PATH
+from consts.global_consts import MERGE_DATA, ROOT_PATH, BIOMART_PATH, POSITIVE_PATH_FEATUERS
 from consts.mirna_utils import MIRBASE_FILE
 from utils import to_csv
 from utils.logger import logger
@@ -19,15 +19,18 @@ def read() -> DataFrame:
     file_name = ROOT_PATH / "generate_interactions/tarBase/interaction_hsa.xlsx"
     validation_string = "geneID"
     usecols = ['geneID', 'geneName',
-               'mirna', 'species']
+               'mirna', 'species', 'tissue']
 
-    # Logic
     logger.info(f"Reading file {file_name}")
     df: DataFrame = pd.read_excel(file_name, usecols=usecols, engine='openpyxl')
     assert df.columns[0] == validation_string, f"reader validation error: {df.columns[0]}"
     print("Number of interactions in tarBase is:", df.shape[0])
-    return df
 
+    # filter only liver interaction that will be match to darnell
+    df = df[df['tissue'] == 'Liver']
+    print("Number of after filter is:", df.shape[0])
+
+    return df
 
 def change_columns_names(df: DataFrame) -> DataFrame:
     return df.rename(columns={"mirna": "miRNA ID", "geneID": "Gene_ID"})
@@ -55,7 +58,7 @@ def filter_clash_interaction(df: DataFrame):
 
     print("################number of rows before filter clash interactins:#####", df.shape[0])
     for file_name in files_name:
-        file_name_path = MERGE_DATA / file_name
+        file_name_path = POSITIVE_PATH_FEATUERS / file_name
         usecols = ['miRNA ID', 'Gene_ID']
         logger.info(f"Reading file {file_name_path}")
         df_positive_interaction = pd.read_csv(file_name_path, usecols=usecols)

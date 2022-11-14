@@ -169,15 +169,15 @@ def worker(dataset_file, results_dir, yaml_file):
     return
 
 
-def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_method):
+def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_method,number_iteration):
     logger.info("starting self_fit")
     logger.info(f"params: {[feature_mode, yaml_file, first_self, last_self]}")
 
     FeatureReader.reader_selection_parameter = feature_mode
-    csv_dir = DATA_PATH_INTERACTIONS / "train" / name_method
+    csv_dir = DATA_PATH_INTERACTIONS / "train" / name_method / number_iteration
     files = list(csv_dir.glob('**/*.csv'))
     for f in files:
-        results_dir = ROOT_PATH / "Results/models" / dir_method
+        results_dir = ROOT_PATH / "Results/models" / dir_method / number_iteration
         logger.info(f"results_dir = {results_dir}")
         logger.info(f"start dataset = {f}")
         worker(f, results_dir=results_dir, yaml_file=yaml_file)
@@ -185,13 +185,14 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
     logger.info("finish self_fit")
 
 
-def build_classifiers():
-    # yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params_small.yml"
-    yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params.yml"
+def build_classifiers(number_iteration):
+    yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params_small.yml"
+    # yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params.yml"
 
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
     # self_fit("without_hot_encoding", yaml_file, 1, 2)
-    self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="underSampling", dir_method="models_underSampling")
+    number_iteration = str(number_iteration)
+    self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="underSampling", dir_method="models_underSampling", number_iteration=number_iteration)
     # self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="stratify", dir_method="models_stratify")
     print("END main_primary")
 

@@ -48,8 +48,10 @@ class MrnaFeatures(Features):
     def extract_features(self):
         self._features_dict["dte"] = self.distance_to_end()
         self._features_dict["dts"] = self.distance_to_start()
-        # make change
+        # make change -
+        # Gilad
         self._features_dict["target_composition"] = seq_composition(self._site, "MRNA_Target")
+        # Efrat
         # self._features_dict["target_composition"] = seq_composition(self._duplex.site[::-1], "MRNA_Target")
 
         try:

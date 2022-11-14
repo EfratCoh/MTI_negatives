@@ -581,10 +581,311 @@ path = "/sise/home/efrco/efrco-master/data/negative_interactions/mockMrna/mockMr
 path = "/sise/home/efrco/efrco-master/data/negative_interactions/mockMirna/mockMirna_darnell_human_ViennaDuplex_negative_features.csv"
 path = "/sise/home/efrco/efrco-master/data/negative_interactions/non_overlapping_sites/non_overlapping_sites_darnell_human_ViennaDuplex_negative_features.csv"
 path = "/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_human_negative_features.csv"
-neg = read_csv(path)
-neg = neg[neg.isna().any(axis=1)]
-cols = neg.columns[neg.isna().any()].tolist()
-print(cols)
-print(neg.shape)
-path_output = "/sise/home/efrco/efrco-master/denucleotides_method2_null_neg.csv"
-to_csv(neg, path_output)
+# neg = read_csv(path)
+# neg = neg[neg.isna().any(axis=1)]
+# cols = neg.columns[neg.isna().any()].tolist()
+# print(cols)
+# print(neg.shape)
+# path_output = "/sise/home/efrco/efrco-master/denucleotides_method2_null_neg.csv"
+# to_csv(neg, path_output)
+
+
+def creat_dir():
+    import os
+
+    # Directory
+    for i in range(12,13):
+        directory = "split_file"
+        name = "clip_" + str(i)
+        # Parent Directory path
+        parent_dir = Path("/sise/vaksler-group/IsanaRNA/miRNA_target_rules/Isana/") / name
+        # parent_dir = "/sise/home/efrco/efrco-master/Results/models/models_binary_comper/"
+
+
+        # Path
+        path = os.path.join(parent_dir, directory)
+
+        # Create the directory
+        # 'GeeksForGeeks' in
+        # '/home / User / Documents'
+        os.mkdir(path)
+        print("Directory '% s' created" % directory)
+
+# creat_dir()
+
+# def model_measuremnt_try():
+#     from sklearn.datasets import make_classification
+#     from sklearn.linear_model import LogisticRegression
+#     from sklearn.model_selection import train_test_split
+#     from sklearn.metrics import precision_recall_curve
+#     from sklearn.metrics import f1_score
+#     from sklearn.metrics import auc
+#     from matplotlib import pyplot
+#     # generate 2 class dataset
+#     X, y = make_classification(n_samples=1000, n_classes=2, random_state=1)
+#     # split into train/test sets
+#     trainX, testX, trainy, testy = train_test_split(X, y, test_size=0.5, random_state=2)
+#     # fit a model
+#     model = LogisticRegression(solver='lbfgs')
+#     model.fit(trainX, trainy)
+#     # predict probabilities
+#     lr_probs = model.predict_proba(testX)
+#     # keep probabilities for the positive outcome only
+#     lr_probs = lr_probs[:, 1]
+#     # predict class values
+#     yhat = model.predict(testX)
+#     lr_precision, lr_recall, _ = precision_recall_curve(testy, lr_probs)
+#     lr_f1, lr_auc = f1_score(testy, yhat), auc(lr_recall, lr_precision)
+#     # summarize scores
+#     print('Logistic: f1=%.3f auc=%.3f' % (lr_f1, lr_auc))
+#     # plot the precision-recall curves
+#     no_skill = len(testy[testy == 1]) / len(testy)
+#     pyplot.plot([0, 1], [no_skill, no_skill], linestyle='--', label='No Skill')
+#     pyplot.plot(lr_recall, lr_precision, marker='.', label='Logistic')
+#     # axis labels
+#     pyplot.xlabel('Recall')
+#     pyplot.ylabel('Precision')
+#     # show the legend
+#     pyplot.legend()
+#     # show the plot
+#     pyplot.show()
+#
+# model_measuremnt_try()
+
+# mirna = read_csv("/sise/vaksler-group/IsanaRNA/miRNA_target_rules/Isana/clip_3/mirna.csv")
+
+
+
+def generate_up(number):
+    list_numbrers = []
+    for i in range(number,number+5):
+        list_numbrers.append(i)
+    return list_numbrers
+
+
+def generate_down(number):
+    list_numbrers = []
+    for i in range(number-4, number+1):
+        list_numbrers.append(i)
+    return list_numbrers
+
+
+
+def get_max_str(lst):
+    # in case that we don't found overlap between two sequences
+    if lst == []:
+        return ""
+    return max(lst, key=len)
+
+def substringFinder(string1, string2):
+    answer = ""
+    anslist = []
+    len1, len2 = len(string1), len(string2)
+    for i in range(len1):
+        match = ""
+        for j in range(len2):
+            if (i + j < len1 and string1[i + j] == string2[j]):
+                match += string2[j]
+            else:
+                #if (len(match) > len(answer)):
+                answer = match
+                if answer != '' and len(answer) > 1:
+                    anslist.append(answer)
+                match = ""
+
+        if match != '':
+            anslist.append(match)
+    c = get_max_str(anslist)
+    return get_max_str(anslist)
+
+
+
+
+
+# df = mrna.loc[df_g["sequence length"].idxmax()]
+
+# print("number:", df_g.ngroups)
+# print(df.shape)
+# # to_csv(df, path)
+# #
+#
+# path = "/sise/home/efrco/efrco-master/generate_interactions/clip_interaction/clip_3.csv"
+# df = read_csv(path)
+# print(df.shape)
+
+from consts.global_consts import ROOT_PATH, DATA_PATH,CLIP_PATH_DATA
+
+def mirna_dist_clip_interactions():
+    clip_data_path = CLIP_PATH_DATA
+    df = []
+    for clip_dir in clip_data_path.iterdir():
+        for file in clip_dir.glob("*mrna.csv*"):
+            mirna_df = read_csv(clip_dir / "mirna.csv")
+            df.append(mirna_df)
+    result = pd.concat(df)
+    result = result.groupby(['miRNA ID']).size().reset_index(name='count')
+    # result = result.groupby(['miRNA ID','count']).size().reset_index(name='count of mirna')
+    # print(result)
+    # # result = result[result['count'] > 12]
+    # ax = sns.barplot(data=result, x="count", y="count of mirna")
+    # ax.bar_label(ax.containers[0])
+    # plt.show()
+    return result
+
+
+def mrna_dist_clip_interactions():
+    clip_data_path = CLIP_PATH_DATA
+    df = []
+    for clip_dir in clip_data_path.iterdir():
+        for file in clip_dir.glob("*mrna_clean.csv*"):
+            mirna_df = read_csv(clip_dir / "mrna_clean.csv")
+            df.append(mirna_df)
+    result = pd.concat(df)
+    result = result.groupby(['ID']).size().reset_index(name='count')
+    # result = result.groupby(['count']).size().reset_index(name='count of mrna')
+    print(result)
+    # result = result[result['count'] > 20]
+    ax = sns.barplot(data=result, x="ID", y="count")
+    ax.bar_label(ax.containers[0])
+    path= "/sise/home/efrco/mrna_dist.csv"
+    plt.show()
+    to_csv(result, path)
+
+# mrna_dist_clip_interactions()
+# mirna_dist_clip_interactions()
+
+def clip_files_dist_mirna():
+    clip3_df = read_csv("/sise/home/efrco/efrco-master/generate_interactions/clip_interaction/clip_6.csv")
+    print("f")
+    result = mirna_dist_clip_interactions()
+    result = result[result['count'] == 2]
+    mirna_list = result['miRNA ID'].tolist()
+    print(len(mirna_list))
+    clip3_df['exists'] = clip3_df['miRNA ID'].apply(lambda id: 1 if id in mirna_list else 0)
+    mirna_list_clip = clip3_df['miRNA ID'].tolist()
+    print(clip3_df['exists'].value_counts())
+
+
+    count = 0
+    for mir in mirna_list:
+        if mir not in mirna_list_clip:
+            print("BUG")
+        else:
+            count = count + 1
+    print(count)
+
+def dist_enrgy_positive_negative():
+
+    # file_pos = read_csv(Path("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv"))
+    # file_neg = read_csv(Path("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv"))
+    r = read_csv("/sise/home/efrco/efrco-master/data/train/underSampling/0/clip_interaction_clip_3_negative_features_train_underSampling_method_0.csv")
+    file_pos = r[r['Label'] == 1]
+    file_neg = r[r['Label'] == 0]
+    sns.set_theme(style="whitegrid")
+    f, ax = plt.subplots(figsize=(9, 9))
+    # col_new = df[df[col] < 0.05]
+    sns.despine(f)
+
+    sns.histplot(
+        file_pos,
+        x="Energy_MEF_Duplex",
+    )
+    # ax.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
+    # ax.set_xticks([0, 0.05, 0.1, 0.15])
+    plt.show()
+    plt.clf()
+    # print(file.shape)
+
+# dist_enrgy_positive_negative()
+
+def dist_enrgy_positive_negative_same_graph():
+
+    r_clip = read_csv("/sise/home/efrco/efrco-master/data/train/underSampling/0/clip_interaction_clip_3_negative_features_train_underSampling_method_0.csv")
+    file_pos = r_clip[r_clip['Label'] == 1]
+    file_neg_clip = r_clip[r_clip['Label'] == 0]
+    file_neg_clip['method'] = 'neg_clip'
+    print("nrg", file_neg_clip.shape)
+    file_neg_clip.reset_index(drop=True, inplace=True)
+    print("pos", file_pos.shape)
+
+    file_neg_clip["len"] = file_neg_clip["site"].apply(lambda x: len(x))
+
+
+    r_mock = read_csv("/sise/home/efrco/efrco-master/data/train/underSampling/0/mockMirna_darnell_human_ViennaDuplex_negative_features_train_underSampling_method_0.csv")
+    file_pos = r_mock[r_mock['Label'] == 1]
+    file_neg_mock = r_mock[r_mock['Label'] == 0]
+    file_neg_mock['method'] = 'mock'
+    file_neg_mock.reset_index(drop=True, inplace=True)
+    print(file_neg_mock.shape)
+    print(file_pos.shape)
+    file_pos["len"] = file_pos["site"].apply(lambda x: len(x))
+    file_neg_mock["len"] = file_neg_mock["site"].apply(lambda x: len(x))
+    # clip_3 = read_csv("/sise/home/efrco/efrco-master/generate_interactions/clip_interaction/clip_3.csv")
+
+    file_pos['method'] = 'pos'
+
+    merge_data_frame= pd.concat([file_neg_mock, file_neg_clip, file_pos])
+    print("pos", merge_data_frame[merge_data_frame['Label']==1].shape)
+    print("neg", merge_data_frame[merge_data_frame['Label']==0].shape)
+
+    merge_data_frame.reset_index(inplace=True)
+    sns.set_theme(style="ticks")
+    f, ax = plt.subplots(figsize=(7, 5))
+    sns.despine(f)
+
+    # sns.histplot(
+    #     merge_data_frame,
+    #     x="Energy_MEF_Duplex", hue="method",
+    #     multiple="stack",
+    #     palette="light:m_r",
+    #     edgecolor=".3",
+    #     stat='density'
+    #     # linewidth=.5,
+    #     # log_scale=True,
+    # )
+    sns.ecdfplot(data=merge_data_frame, x="len", hue="method")
+    # ax.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
+    # ax.set_xticks([500, 1000, 2000, 5000, 10000])
+    plt.show()
+    plt.clf()
+
+# dist_enrgy_positive_negative_same_graph()
+
+
+def dist_enrgy_positive_negative_same_graph_len_site():
+
+    pos = read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/data_without_featuers/darnell_human_ViennaDuplex.csv")
+    pos['method'] = 'pos'
+    pos["len"] = pos["site"].apply(lambda x: len(x))
+    pos.reset_index(drop=True, inplace=True)
+
+    neg = read_csv("/sise/home/efrco/efrco-master/generate_interactions/clip_interaction/clip_3.csv")
+    neg["len"] = neg["site"].apply(lambda x: len(x))
+    neg['method'] = 'neg'
+    neg.reset_index(drop=True, inplace=True)
+
+
+    merge_data_frame= pd.concat([pos, neg])
+
+    merge_data_frame.reset_index(inplace=True)
+    sns.set_theme(style="ticks")
+    f, ax = plt.subplots(figsize=(7, 5))
+    sns.despine(f)
+
+    # sns.histplot(
+    #     merge_data_frame,
+    #     x="Energy_MEF_Duplex", hue="method",
+    #     multiple="stack",
+    #     palette="light:m_r",
+    #     edgecolor=".3",
+    #     stat='density'
+    #     # linewidth=.5,
+    #     # log_scale=True,
+    # )
+    sns.ecdfplot(data=merge_data_frame, x="len", hue="method")
+    # ax.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
+    # ax.set_xticks([500, 1000, 2000, 5000, 10000])
+    plt.show()
+    plt.clf()
+
+dist_enrgy_positive_negative_same_graph_len_site()

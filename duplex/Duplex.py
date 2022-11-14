@@ -210,7 +210,7 @@ class Duplex():
         for i in range(mir_start, mir_len):
             mrna_site += mix_inter_bulge_seq(mrna_inter[i], mrna_bulge[i])
 
-        mrna_site = mrna_site.replace (" ","")
+        mrna_site = mrna_site.replace(" ","")
 
 
         # print("DUPLEX:", len(mrna_site))

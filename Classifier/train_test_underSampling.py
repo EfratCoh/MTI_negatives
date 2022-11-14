@@ -18,17 +18,19 @@ from utils.utilsfile import read_csv, to_csv
 
 
 
-def imbalanced_partation(pos, pos_train, pos_test, input_file_negative, output_dir, test_size, random_state):
+def imbalanced_partation(pos, pos_train, pos_test, input_file_negative, output_dir, test_size, random_state, number_split):
 
     neg = read_csv(input_file_negative)
     neg.insert(0, "Label", 0)
-
+    number_split = str(number_split)
     # Both dataset must have the same columns
     col = [c for c in pos.columns if c in neg.columns]
     pos_test = pos_test[col]
     pos_train = pos_train[col]
     pos = pos[col]
     neg = neg[col]
+    if neg.shape[0] > 100000:
+        neg = neg.sample(n=100000, random_state=random_state)
 
     neg.insert(0, "Label1", 0)
     pos.insert(0, "Label1", 1)
@@ -37,7 +39,6 @@ def imbalanced_partation(pos, pos_train, pos_test, input_file_negative, output_d
     y = merge.Label.ravel()
     X = merge.drop(columns=['Label'], axis=1)
     print(Counter(y))
-
     # define undersample strategy
     undersample = RandomUnderSampler(sampling_strategy='majority', random_state=random_state)
 
@@ -55,18 +56,20 @@ def imbalanced_partation(pos, pos_train, pos_test, input_file_negative, output_d
     }
 
     # save to csv
-    output_dir = Path("/sise/home/efrco/efrco-master/data")
+    output_dir = DATA_PATH_INTERACTIONS
     dataset = str(input_file_negative.stem).split("_features_")[0]
     for key, d in output.items():
         out_file = f"{dataset}_{key}"
-        out_file = out_file + "_underSampling_method.csv"
+        out_file = out_file + f"_underSampling_method_{number_split}.csv"
         d = d.reindex(np.random.RandomState(seed=random_state).permutation(d.index))
-        output_dir_train_test = output_dir / key / "underSampling"
+        output_dir_train_test = output_dir / key / "underSampling" / number_split
         to_csv(d, output_dir_train_test / out_file)
+        del(d)
+
 
 
 # function that response to split with random
-def split_train_test(dataset_positive_name, random_state):
+def split_train_test(dataset_positive_name, random_state, number_split):
 
     dir = NEGATIVE_DATA_PATH
     train_test_dir = DATA_PATH_INTERACTIONS
@@ -92,12 +95,12 @@ def split_train_test(dataset_positive_name, random_state):
             # Only take the correct mock file
 
             if any(method in method_dir.stem for method in list_method):
-                correct_dataset =  dataset_positive_name.split("_features")[0] + "_negative_features"
+                correct_dataset = dataset_positive_name.split("_features")[0] + "_negative_features"
                 list_split = dataset_file_neg.stem.split("/")
                 list_split = [str(s) for s in list_split]
                 if correct_dataset not in list_split[0]:
                     continue
-            imbalanced_partation(pos, pos_train, pos_test, dataset_file_neg, train_test_dir, 0.2, random_state)
+            imbalanced_partation(pos, pos_train, pos_test, dataset_file_neg, train_test_dir, 0.2, random_state, number_split)
 
 
 def test_size():
