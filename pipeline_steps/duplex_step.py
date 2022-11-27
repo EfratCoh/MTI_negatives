@@ -16,13 +16,15 @@ def do_duplex(mirna: str, target: str, cls: Duplex) -> Series:
 
     if pd.isna(mirna) or pd.isna(target):
         return Series({"duplex_valid" : False,
-              "site": "",
-              "mrna_bulge": "",
-              "mrna_inter": "",
-              "mir_inter": "",
-              "mir_bulge": ""})
+                       "not_match_site": "",
+                           "site": "",
+                      "mrna_bulge": "",
+                      "mrna_inter": "",
+                      "mir_inter": "",
+                      "mir_bulge": ""})
     dp = cls.fromChimera(mirna, target)
     return Series({"duplex_valid": dp.valid,
+                   "not_match_site": dp.site_non_match_tail,
                    "site": dp.site[::-1],
               "mrna_bulge": dp.mrna_bulge,
               "mrna_inter": dp.mrna_inter,

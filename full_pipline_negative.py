@@ -3,7 +3,6 @@ from pipline_steps_negative.rna_site_insertion_negative import get_site_from_ext
 from pipline_steps_negative.normalization_final_step_negative import finalize
 from pipeline_steps.feature_extraction import feature_extraction
 from consts.global_consts import NEGATIVE_DATA_PATH, GENERATE_DATA_PATH
-# from pipline_steps_negative.duplex_step_negative import duplex as duplex_negative
 
 
 # step 1- formalization all the dataset for the same format
@@ -84,20 +83,21 @@ def full_pipline(name_of_method: str, name_of_file: str, duplex=duplex_negative)
 # from generate_interactions.mockMrna.run_methods import run
 # run()
 
-# ####method 5 - clip_interaction  ######
+##### method 5 - clip_interaction  ######
 # from generate_interactions.clip_interaction.run_method import run
-# # from pipeline_steps.duplex_step import duplex as duplex_positive
+# from pipeline_steps.duplex_step import duplex as duplex_positive
 # run()
+# full_pipline("clip_interaction", "clip_3", duplex_positive)
 
 # full_pipline("clip_interaction", "clip_1", duplex_positive)
 # full_pipline("clip_interaction", "clip_2", duplex_positive)
-# full_pipline("clip_interaction", "clip_3", duplex_positive)
-# full_pipline("clip_interaction", "clip_6", duplex_positive) #3606
+# full_pipline("clip_interaction", "clip_6", duplex_positive)
 
 
 # ####method 6 - non_overlapping_sites_clip_data  ######
-from generate_interactions.non_overlapping_sites_clip_data.generate import run
-run() #4826728 - in the past method
-# 4826734 - new filter
+from generate_interactions.non_overlapping_sites_clip_data.generate import main_run
+main_run() #4826728 - in the past method
 
+
+###all the 3 run are on clip3 and darenell we need to do that for all clip data
 

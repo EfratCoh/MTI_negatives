@@ -277,3 +277,33 @@ class Duplex():
         r3_8 = (c3_8 >= 5) and (bulge_mismatch_3_8 <= 1)
 
         return r2_7 or r3_8
+
+    @property
+    def site_non_match_tail(self) -> str:
+
+        mir_len = max(len(self._mir_inter), len(self._mir_bulge))
+        mrna_bulge = self._mrna_bulge + " "*mir_len
+        ca= self._mir_bulge[0]
+        count_not_match = 0
+        # check left side
+        for i in range(0, len(self._mir_bulge)):
+            if self._mir_bulge[i] != " ":
+                if mrna_bulge[i] == " ":
+                    count_not_match = count_not_match + 1
+                else:
+                    break
+            else:
+                break
+
+
+        # check right side
+        for i in range(len(self._mir_bulge) - 1,0,-1):
+            if self._mir_bulge[i] != " ":
+                if mrna_bulge[i] == " ":
+                    count_not_match = count_not_match + 1
+                else:
+                    break
+            else:
+                break
+
+        return count_not_match

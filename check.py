@@ -888,4 +888,8 @@ def dist_enrgy_positive_negative_same_graph_len_site():
     plt.show()
     plt.clf()
 
-dist_enrgy_positive_negative_same_graph_len_site()
+# dist_enrgy_positive_negative_same_graph_len_site()
+
+
+clip = read_csv( "/sise/vaksler-group/IsanaRNA/miRNA_target_rules/Isana/clip_3/mrna_clean.csv")
+print("g")

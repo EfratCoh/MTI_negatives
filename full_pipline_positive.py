@@ -55,6 +55,10 @@ def generate_positive_interaction():
 
     pos_dir_name = MERGE_DATA / "positive_interactions_merge"
     for dataset_file in pos_dir_name.glob("*_features*"):
+        name_darnell = "darnell_human_ViennaDuplex_features"
+        name_data = str(dataset_file.stem)
+        # if name_darnell != name_data:
+        #     continue
         print(dataset_file)
         pos_df = read_csv(dataset_file)
         pos_df.rename(columns={"sequence": "full_mrna"}, inplace=True)

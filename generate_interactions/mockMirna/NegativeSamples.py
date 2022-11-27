@@ -114,7 +114,8 @@ class NegativeSamples(object):
                     "num_of_pairs": num_of_pairs
                 }
                 return True, properties
-        return False, {}
+        return
+
 
 
 def worker(organism, fin, fout_name, tmp_dir):

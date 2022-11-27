@@ -50,7 +50,7 @@ def find_full_mrna(df, df_mrna_hsa):
     df_new['start'] = df_new['start'].astype(int)
     df_new['end'] = df_new['start'] + df_new['len_site'] - 1
     df_new["site_new"] = df_new.apply(func=get_wrapper(get_subsequence_by_coordinates,
-                                           "full_mrna", "start", "end",
+                                           "full_mrna", "start", "end",strand="+",
                                            extra_chars=0),axis=1)
 
     # step 4 ---> filer the mrna that doesn't match exactly to the original site
@@ -65,8 +65,11 @@ def find_full_mrna(df, df_mrna_hsa):
     df_new["number_chars_complete"] = df_new.apply(func=get_wrapper(complete_site_chars,
                                                        "start", "end"), axis=1)
 
+    df_new['number_chars_complete'] = df_new['number_chars_complete'].astype(int)
+    df_new['strand'] = "+"
+
     df_new["site_new"] = df_new.apply(func=get_wrapper(get_subsequence_by_coordinates,
-                                                       "full_mrna", "start", "end", "number_chars_complete"
+                                                       "full_mrna", "start", "end", "strand", "number_chars_complete"
                                                        ), axis=1)
 
     return df_new
@@ -138,6 +141,7 @@ def split_files_add_data():
                         split_line = line.split("\t")
                         read_list.append(split_line)
                         count = count + 1
+
                     if count == 2000000:
 
                         # from list to dataframe
@@ -153,6 +157,18 @@ def split_files_add_data():
                         df._clear_item_cache()
                         read_list.clear()
 
+                 # the buffer is close but there are more line
+                 if count > 0:
+                    # from list to dataframe
+                    df = creat_data_frame_list(read_list)
+                    df = find_full_mrna(df, df_mrna_hsa)
+                    df = drop_duplicate(df)
+
+                    name = str(number_file) + ".csv"
+                    path_df = clip_dir / "split_file" / name
+                    to_csv(df, path_df)
+                    df._clear_item_cache()
+                    read_list.clear()
 
 def combine_files():
 
@@ -160,9 +176,8 @@ def combine_files():
     for clip_dir in clip_data_path.iterdir():
         clip_dir_new = clip_dir / "split_file"
         for f in clip_dir.glob("*result_mirna*"):
-
-            # if "clip_3" not in str(clip_dir):
-            #     continue
+            if "clip_3" not in str(clip_dir):
+                continue
             frames = []
             for file in clip_dir_new.glob("*csv*"):
                 print("################################################")
@@ -268,15 +283,4 @@ def run_mrna_generate_files():
 # run_mrna_generate_files()
 
 
-# Gene_ID ---> number Gen
-# ID ---> number Gen + number Transcript
 
-# path = "/sise/vaksler-group/IsanaRNA/miRNA_target_rules/Isana/clip_10/mrna.csv"
-# df = read_csv(path)
-# df_g = df.groupby(['ID','site_new'])
-# df = df.loc[df_g["sequence length"].idxmax()]
-#
-# print("number:", df_g.ngroups)
-# print(df.shape)
-# to_csv(df, path)
-#
