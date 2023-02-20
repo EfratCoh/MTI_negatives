@@ -21,13 +21,11 @@ def do_duplex(mirna: str, target: str, cls: Duplex) -> Series:
                       "mrna_bulge": "",
                       "mrna_inter": "",
                       "mir_inter": "",
-                       "fragmnet": target,
                       "mir_bulge": ""})
     dp = cls.fromChimera(mirna, target)
     return Series({"duplex_valid": dp.valid,
                    "not_match_site": dp.site_non_match_tail,
                    "site": dp.site[::-1],
-                   "fragmnet":target,
               "mrna_bulge": dp.mrna_bulge,
               "mrna_inter": dp.mrna_inter,
               "mir_inter": dp.mir_inter,
