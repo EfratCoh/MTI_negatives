@@ -63,7 +63,7 @@ def generate_positive_interaction():
         pos_df = read_csv(dataset_file)
         pos_df.rename(columns={"sequence": "full_mrna"}, inplace=True)
 
-        col_list = ['key', 'paper name', 'organism', 'miRNA ID', 'miRNA sequence', 'site', 'region','valid_row' , 'full_mrna', 'Gene_ID', 'region count']
+        col_list = ['key', 'paper name', 'organism', 'miRNA ID', 'miRNA sequence', 'site', 'region','valid_row' , 'full_mrna', 'Gene_ID']
         pos_df = pos_df[col_list]
         path = MERGE_DATA / "positive_interactions_new/data_without_featuers"
         dataset_name = str(dataset_file.stem).split("_features.csv")[0].split("_features")[0]
