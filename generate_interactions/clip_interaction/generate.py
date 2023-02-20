@@ -137,6 +137,7 @@ def generate_interaction(df_mrna,mirna_df,list_seed_family):
     merge_interaction_non_clash = filter_clash_interaction(merge_interaction)
 
     # step-2 ---> filter interactions by conditions - canon or non canon
+    # site_new--> the original site after extracted from the full mrna by coordinates
     merge_interaction_non_clash["valid"] = merge_interaction_non_clash.apply(func=get_wrapper(valid_interactions,
                                                        "sequence", "site_new"), axis=1)
 
@@ -150,7 +151,6 @@ def genetate_interactions_from_files():
     list_seed_family = get_all_seed_family()
     for clip_dir in clip_data_path.iterdir():
         for file in clip_dir.glob("*mrna.csv*"):
-
             if "clip_3" not in str(file):
                 continue
             mirna_df = read_csv(clip_dir / "mirna.csv")
@@ -163,5 +163,5 @@ def genetate_interactions_from_files():
             path_df = GENERATE_DATA_PATH / name_dir / name_file
             to_csv(interactions_df, path_df)
 
-# genetate_interactions_from_files()
+genetate_interactions_from_files()
 

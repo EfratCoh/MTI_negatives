@@ -58,7 +58,9 @@ def finalize(fin: str, fout:str):
     df["valid_row"] = ~reduce((lambda x, y: x | y), invalid_conditions)
     df["region"] = '3utr'
     df.reset_index(inplace=True)
-
+    columns_name= list(df.columns)
+    if 'level_0' in columns_name:
+       df.drop(columns=['level_0'], inplace=True)
 
     #df = df[NORMALIZATION_COLUMNS]
     to_csv(df, Path(fout))

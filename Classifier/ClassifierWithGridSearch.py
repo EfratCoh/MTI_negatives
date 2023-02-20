@@ -177,6 +177,8 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
     csv_dir = DATA_PATH_INTERACTIONS / "train" / name_method / number_iteration
     files = list(csv_dir.glob('**/*.csv'))
     for f in files:
+        # if "non_overlapping_sites_darnell_human_ViennaDuplex_negative_features_train_underSampling_method_0" not in f.name:
+        #     continue
         results_dir = ROOT_PATH / "Results/models" / dir_method / number_iteration
         logger.info(f"results_dir = {results_dir}")
         logger.info(f"start dataset = {f}")
@@ -190,13 +192,13 @@ def build_classifiers(number_iteration):
     # yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params.yml"
 
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
-    # self_fit("without_hot_encoding", yaml_file, 1, 2)
     number_iteration = str(number_iteration)
     self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="underSampling", dir_method="models_underSampling", number_iteration=number_iteration)
-    # self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="stratify", dir_method="models_stratify")
     print("END main_primary")
 
 # build_classifiers()
+
+# build_classifiers(number_iteration=0)
 
 
 

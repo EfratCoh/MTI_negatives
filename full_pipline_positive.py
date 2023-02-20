@@ -57,13 +57,13 @@ def generate_positive_interaction():
     for dataset_file in pos_dir_name.glob("*_features*"):
         name_darnell = "darnell_human_ViennaDuplex_features"
         name_data = str(dataset_file.stem)
-        # if name_darnell != name_data:
-        #     continue
+        if name_darnell != name_data:
+            continue
         print(dataset_file)
         pos_df = read_csv(dataset_file)
         pos_df.rename(columns={"sequence": "full_mrna"}, inplace=True)
 
-        col_list = ['key', 'paper name', 'organism', 'miRNA ID', 'miRNA sequence', 'site', 'region','valid_row' , 'full_mrna', 'Gene_ID']
+        col_list = ['key', 'paper name', 'organism', 'miRNA ID', 'miRNA sequence', 'site', 'region','valid_row' , 'full_mrna', 'Gene_ID', 'region count']
         pos_df = pos_df[col_list]
         path = MERGE_DATA / "positive_interactions_new/data_without_featuers"
         dataset_name = str(dataset_file.stem).split("_features.csv")[0].split("_features")[0]

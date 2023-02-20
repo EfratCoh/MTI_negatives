@@ -172,19 +172,22 @@ def worker(organism, fin, fout_name, tmp_dir):
 
 
 def main():
+    #INPUT DIR
     file_name = ROOT_PATH / "data/positive_interactions/positive_interactions_merge"
+    #OUTPUT
     tmp_base = ROOT_PATH / "generate_interactions/mockMirna/"
     print("tmp:", tmp_base)
     files = list(file_name.glob('**/*.csv'))
     for p in files:
+        name = Path("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_merge/darnell_human_ViennaDuplex_features.csv")
+        if p != name:
+            continue
         fout_name = p.name.split('.csv')[0] + '.csv'
         worker('hsa', p, fout_name, tmp_base)
 
 # main()
 
 
-df = read_csv(MIRBASE_FILE)
-print(df)
 
 
 

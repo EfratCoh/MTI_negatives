@@ -34,16 +34,27 @@ from consts.global_consts import ROOT_PATH, NEGATIVE_DATA_PATH, MERGE_DATA, DATA
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 import seaborn as sns
+from sklearn.metrics import plot_confusion_matrix
+
 
 
 class NoModelFound(Exception):
     pass
 
+def model_confuse_matrix(x_test, y_test, model, model_name,s_org,d_org,name_classifiers):
+
+    plot_confusion_matrix(model, x_test, y_test)
+    plt.title(f"{s_org}_{d_org}_confuse_matrix_plot")
+    fname = ROOT_PATH / Path(f"Results/figuers/{name_classifiers}/confuse_matrix/") / f"{s_org}_{d_org}.pdf"
+    plt.savefig(fname, format="pdf", bbox_inches='tight')
+    plt.show()
+    plt.clf()
+
+
 
 def measurement(y_true, y_pred):
     cm = confusion_matrix(y_true, y_pred).ravel()
     # cm = confusion_matrix(y_true, y_pred)
-
 
     # print(cm)
     # TP = cm[0][0]
@@ -258,6 +269,8 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
                         print('Precision: %.3f' % precision)
                         recall = recall_score(y_test, prediction, average='binary')
                         print('Recall: %.3f' % recall)
+                        # model_confuse_matrix(X_test,y_test, clf, method, clf_dataset, test_dataset,name_classifier)
+
 
 
                     else:
@@ -266,6 +279,7 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
                         model_shap_plot(X_test, clf, method, clf_dataset, test_dataset,name_classifier, dependence_feature=None)
                         # features importance graph
                         plot_feature_importances(clf, X_test,clf_dataset, test_dataset, name_classifier)
+                        model_confuse_matrix(X_test,y_test, clf, method, clf_dataset, test_dataset,name_classifier)
 
                     if name_classifier == 'isolation_forest':
                         # features shap graph

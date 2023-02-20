@@ -283,7 +283,7 @@ class Duplex():
 
         mir_len = max(len(self._mir_inter), len(self._mir_bulge))
         mrna_bulge = self._mrna_bulge + " "*mir_len
-        ca= self._mir_bulge[0]
+        ca = self._mir_bulge[0]
         count_not_match = 0
         # check left side
         for i in range(0, len(self._mir_bulge)):
@@ -294,7 +294,6 @@ class Duplex():
                     break
             else:
                 break
-
 
         # check right side
         for i in range(len(self._mir_bulge) - 1,0,-1):

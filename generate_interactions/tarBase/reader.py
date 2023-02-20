@@ -19,16 +19,16 @@ def read() -> DataFrame:
     file_name = ROOT_PATH / "generate_interactions/tarBase/interaction_hsa.xlsx"
     validation_string = "geneID"
     usecols = ['geneID', 'geneName',
-               'mirna', 'species', 'tissue']
+               'mirna', 'species', 'tissue', 'method']
 
     logger.info(f"Reading file {file_name}")
     df: DataFrame = pd.read_excel(file_name, usecols=usecols, engine='openpyxl')
     assert df.columns[0] == validation_string, f"reader validation error: {df.columns[0]}"
     print("Number of interactions in tarBase is:", df.shape[0])
 
-    # filter only liver interaction that will be match to darnell
-    df = df[df['tissue'] == 'Liver']
-    print("Number of after filter is:", df.shape[0])
+    # # filter only liver interaction that will be match to darnell
+    # df = df[df['tissue'] == 'Liver']
+    # print("Number of after filter is:", df.shape[0])
 
     return df
 
@@ -151,7 +151,7 @@ def run(out_filename):
 
     # reorder to columns
     column_names = ['index', 'Source', 'organism', 'miRNA ID',
-                    'Gene_ID', 'miRNA sequence', 'full_mrna']
+                    'Gene_ID', 'miRNA sequence', 'full_mrna', 'method', 'tissue']
     logger.info("replace T with U")
     seq_cols = ['miRNA sequence', 'full_mrna']
     df[seq_cols] = df[seq_cols].replace(to_replace='T', value='U', regex=True)

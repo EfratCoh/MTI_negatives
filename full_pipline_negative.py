@@ -58,7 +58,7 @@ def full_pipline(name_of_method: str, name_of_file: str, duplex=duplex_negative)
 
 # method 1 - tarBase#
 # from generate_interactions.tarBase import reader
-# reader.run("generate_interactions/tarBase/tarBase_human_negative.csv")
+# reader.run("generate_interactions/tarBase/human_features_negative.csv")
 # full_pipline("tarBase", "human_features_negative")
 
 # method 2 - mockMirna#
@@ -71,7 +71,7 @@ def full_pipline(name_of_method: str, name_of_file: str, duplex=duplex_negative)
 
 
 # Method 3 - non_overlapping_sites #
-# from generate_interactions.non_overlapping_sites import generate
+from generate_interactions.non_overlapping_sites import generate
 # from pipeline_steps.duplex_step import duplex as duplex_positive
 # generate.main()
 # full_pipline("non_overlapping_sites", "darnell_human_ViennaDuplex_features_negative", duplex_positive)
@@ -79,25 +79,45 @@ def full_pipline(name_of_method: str, name_of_file: str, duplex=duplex_negative)
 # full_pipline("non_overlapping_sites", "unambiguous_human_ViennaDuplex_features_negative", duplex_positive)
 # full_pipline("non_overlapping_sites", "qclash_melanoma_human_ViennaDuplex_features_negative", duplex_positive)
 
+
+# Method 3a - non_overlapping_sites- random #
+# # from generate_interactions.non_overlapping_sites import generate_random
+# from pipeline_steps.duplex_step import duplex as duplex_positive
+# # generate_random.main()
+# full_pipline("non_overlapping_sites", "random_darnell_human_ViennaDuplex_features_negative", duplex_positive) #5308606
+
+
 # ####method 4 - mockMrna  ######
 # from generate_interactions.mockMrna.run_methods import run
 # run()
 
 ##### method 5 - clip_interaction  ######
 # from generate_interactions.clip_interaction.run_method import run
-# from pipeline_steps.duplex_step import duplex as duplex_positive
+from pipeline_steps.duplex_step import duplex as duplex_positive
 # run()
 # full_pipline("clip_interaction", "clip_3", duplex_positive)
 
-# full_pipline("clip_interaction", "clip_1", duplex_positive)
-# full_pipline("clip_interaction", "clip_2", duplex_positive)
-# full_pipline("clip_interaction", "clip_6", duplex_positive)
-
 
 # ####method 6 - non_overlapping_sites_clip_data  ######
-from generate_interactions.non_overlapping_sites_clip_data.generate import main_run
-main_run() #4826728 - in the past method
-
-
+# from generate_interactions.non_overlapping_sites_clip_data.generate import main_run_clip
+# main_run_clip()
+# from generate_interactions.non_overlapping_sites_clip_data.generate import main_run_clash
+# main_run_clash()
+# from generate_interactions.non_overlapping_sites_clip_data.generate import  main_run_twice
+# main_run_twice()
+# from pipeline_steps.duplex_step import duplex as duplex_positive
+# full_pipline("non_overlapping_sites_clip_data", "darnell_human_ViennaDuplex_features_negative", duplex_positive)
 ###all the 3 run are on clip3 and darenell we need to do that for all clip data
+
+
+#method 6a - non_overlapping_sites_clip_data_random  ######
+# from generate_interactions.non_overlapping_sites_clip_data.generate_random import full_pipline_run
+# full_pipline_run()
+# full_pipline("non_overlapping_sites_clip_data", "random_darnell_human_ViennaDuplex_features_negative", duplex_positive)
+#5308607
+
+
+# intra#
+# from Classifier.Intra_experiments import clip_experminents
+# clip_experminents()
 

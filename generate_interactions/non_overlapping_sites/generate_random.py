@@ -17,7 +17,7 @@ import mirna_utils.mirbase as MBU
 from multiprocessing import Process
 from consts.global_consts import CONFIG
 from duplex.Duplex import Duplex
-
+import random
 
 def valid_negative_seq(mir, mrna):
     duplex_cls: Duplex = DUPLEX_DICT['ViennaDuplex']
@@ -72,8 +72,6 @@ def generate_negative_seq_2(orig_mirna, full_mrna, num_of_tries=10000):
     return True, properties
 
 
-
-
 def sub_without_site(full_mrna, start, end, site):
     sub = full_mrna[:int(start) - 1] + full_mrna[int(end):]
     # full_nre = sub[:int(start)-1] + site[:] +sub[int(start)-1:]
@@ -113,8 +111,7 @@ def worker(fin, fout_name, tmp_dir):
         # get all the rows of this subset of interactions with the same mirna and mrna
         rows_group = rows_group[rows_group["miRNA_ID"] == mirna_name]
 
-        # rows_group['cut_mrna'] = rows_group.apply(func=get_wrapper(sub_without_site,
-        #              "sequence", "start", "end", "site"), axis=1)
+
         full_mrna = rows_group.iloc[0]["sequence"]
         mrna_cut = rows_group.iloc[0]["sequence"]
         extra_chars = 10
@@ -131,10 +128,10 @@ def worker(fin, fout_name, tmp_dir):
         global_count = 0
         # cut_mrna = row['cut_mrna']
         cut_mrna = mrna_cut
-
         size_param = 40
-        pervious_MEF_duplex = float('inf')
         new_row = pd.Series()
+        dict_windows = dict()
+
         for window in range(0, len(cut_mrna) + size_param, size_param):
             global_count += 1
             sub_mrna = cut_mrna[window:window+75]
@@ -145,27 +142,24 @@ def worker(fin, fout_name, tmp_dir):
             if not valid:
                 continue
 
-            # if for the new candidate have min energy
-            if properties["MEF_duplex"] <= pervious_MEF_duplex:
-                # save the best candidate site for this interactions
-                pervious_MEF_duplex = properties["MEF_duplex"]
+            new_row = pd.Series()
+            new_row['paper name'] = row['paper name']
+            new_row['organism'] = row['organism']
+            new_row['miRNA ID'] = row.miRNA_ID
+            new_row['miRNA sequence'] = properties["mock_mirna"]
+            new_row['Gene_ID'] = row.Gene_ID
+            new_row['full_mrna'] = row.sequence
+            new_row['site'] = sub_mrna
+            dict_windows[global_count] = new_row
 
-                new_row = pd.Series()
-                new_row['paper name'] = row['paper name']
-                new_row['organism'] = row['organism']
-                new_row['miRNA ID'] = row.miRNA_ID
-                new_row['miRNA sequence'] = properties["mock_mirna"]
-                new_row['Gene_ID'] = row.Gene_ID
-                new_row['full_mrna'] = row.sequence
-                new_row['site'] = sub_mrna
-
-        if len(new_row) == 0:
+        if len(dict_windows) == 0:
             count +=1
-            print("###############################################################################")
             print("not found interaction for",i ," dataset:", fout_name)
             continue
 
-        neg_df = neg_df.append(new_row, ignore_index=True)
+        values = list(dict_windows.values())
+        random_value = random.choice(values)
+        neg_df = neg_df.append(random_value, ignore_index=True)
         # if i > 1:
         #     break
 
@@ -184,7 +178,6 @@ def worker(fin, fout_name, tmp_dir):
     print("The number of interacrtion that not  founf:", count)
 
 
-
 def main():
     file_name = MERGE_DATA / "positive_interactions_new/featuers_step/"
     tmp_base = ROOT_PATH / "generate_interactions/non_overlapping_sites/"
@@ -194,25 +187,8 @@ def main():
         if "darnell" not in p.stem:
             continue
         print(p)
-        fout_name = p.name.split('.csv')[0] + '.csv'
+        fout_name = p.name.split('.csv')[0] + '_random.csv'
         worker(p, fout_name, tmp_base)
         break
 
-# main()
-# print("")
-
-#
-# count = 0
-# df = read_csv(Path("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites/darnell_human_ViennaDuplex_features_negative.csv"))
-# gruop_rows = df.groupby(['Gene_ID', "miRNA ID"])
-# group = list(gruop_rows.groups)
-# for g in group:
-#     mirna_name = g[1]
-#     mrna_name = g[0]
-#     rows_group = df[(df['Gene_ID'] == mrna_name)]
-#     # get all the rows of this subset of interactions with the same mirna and mrna
-#     rows_group = rows_group[rows_group["miRNA ID"] == mirna_name]
-#     if len(rows_group) > 1:
-#         count = count + 1
-# print(count)
-#
+main()

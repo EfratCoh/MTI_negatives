@@ -95,6 +95,7 @@ class MockMRNA(object):
 
         mrna_mock = ''.join(seq_str)
         return mrna_mock
+
     def generate_mrna_mock_nucleotides_ushuffle(self, mrna, th=5):
 
         seq = list(mrna.replace('T', 'U').upper())
@@ -120,24 +121,6 @@ class MockMRNA(object):
         mrna_mock = ''.join(seq_str)
         return mrna_mock
 
-    # def generate_mrna_mock_nucleotides(self, mrna, th=5):
-    #
-    #     seq = list(mrna.replace('T', 'U').upper())
-    #     seq_original = list(mrna.replace('T', 'U').upper())
-    #
-    #     num_shuffle = 0
-    #     equal_to_itself = True
-    #     while equal_to_itself:
-    #         random.shuffle(seq)
-    #         num_shuffle += 1
-    #         if num_shuffle % 10000 == 0:
-    #             print(num_shuffle)
-    #         if num_shuffle > 100000:
-    #             break
-    #         equal_to_itself = seq_original == seq
-    #
-    #     mrna_mock = ''.join(seq)
-    #     return mrna_mock
 
     def valid_negative_seq(self, mir, mrna):
 

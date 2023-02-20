@@ -2,7 +2,7 @@ from consts.global_consts import ROOT_PATH,BIOMART_PATH, MERGE_DATA, NEGATIVE_DA
 from utils.utilsfile import read_csv, to_csv
 import pandas as pd
 from pathlib import Path
-
+from utils.utilsfile import apply_in_chunks, get_wrapper, read_csv, to_csv
 
 def cc():
     file_name = BIOMART_PATH / "human_3utr.csv"
@@ -801,27 +801,20 @@ def dist_enrgy_positive_negative():
 def dist_enrgy_positive_negative_same_graph():
 
     r_clip = read_csv("/sise/home/efrco/efrco-master/data/train/underSampling/0/clip_interaction_clip_3_negative_features_train_underSampling_method_0.csv")
-    file_pos = r_clip[r_clip['Label'] == 1]
     file_neg_clip = r_clip[r_clip['Label'] == 0]
     file_neg_clip['method'] = 'neg_clip'
-    print("nrg", file_neg_clip.shape)
     file_neg_clip.reset_index(drop=True, inplace=True)
-    print("pos", file_pos.shape)
-
     file_neg_clip["len"] = file_neg_clip["site"].apply(lambda x: len(x))
 
 
     r_mock = read_csv("/sise/home/efrco/efrco-master/data/train/underSampling/0/mockMirna_darnell_human_ViennaDuplex_negative_features_train_underSampling_method_0.csv")
-    file_pos = r_mock[r_mock['Label'] == 1]
     file_neg_mock = r_mock[r_mock['Label'] == 0]
     file_neg_mock['method'] = 'mock'
     file_neg_mock.reset_index(drop=True, inplace=True)
-    print(file_neg_mock.shape)
-    print(file_pos.shape)
+
+    file_pos = r_clip[r_clip['Label'] == 1]
     file_pos["len"] = file_pos["site"].apply(lambda x: len(x))
     file_neg_mock["len"] = file_neg_mock["site"].apply(lambda x: len(x))
-    # clip_3 = read_csv("/sise/home/efrco/efrco-master/generate_interactions/clip_interaction/clip_3.csv")
-
     file_pos['method'] = 'pos'
 
     merge_data_frame= pd.concat([file_neg_mock, file_neg_clip, file_pos])
@@ -843,16 +836,15 @@ def dist_enrgy_positive_negative_same_graph():
     #     # linewidth=.5,
     #     # log_scale=True,
     # )
-    sns.ecdfplot(data=merge_data_frame, x="len", hue="method")
-    # ax.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
-    # ax.set_xticks([500, 1000, 2000, 5000, 10000])
+    sns.ecdfplot(data=merge_data_frame, x="Energy_MEF_Duplex", hue="method")
+
     plt.show()
     plt.clf()
 
 # dist_enrgy_positive_negative_same_graph()
 
 
-def dist_enrgy_positive_negative_same_graph_len_site():
+def dist_enrgy_positive_negative_same_graph_len_site_original():
 
     pos = read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/data_without_featuers/darnell_human_ViennaDuplex.csv")
     pos['method'] = 'pos'
@@ -871,25 +863,198 @@ def dist_enrgy_positive_negative_same_graph_len_site():
     sns.set_theme(style="ticks")
     f, ax = plt.subplots(figsize=(7, 5))
     sns.despine(f)
-
-    # sns.histplot(
-    #     merge_data_frame,
-    #     x="Energy_MEF_Duplex", hue="method",
-    #     multiple="stack",
-    #     palette="light:m_r",
-    #     edgecolor=".3",
-    #     stat='density'
-    #     # linewidth=.5,
-    #     # log_scale=True,
-    # )
     sns.ecdfplot(data=merge_data_frame, x="len", hue="method")
-    # ax.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
-    # ax.set_xticks([500, 1000, 2000, 5000, 10000])
+
     plt.show()
     plt.clf()
 
-# dist_enrgy_positive_negative_same_graph_len_site()
+# dist_enrgy_positive_negative_same_graph_len_site_original()
+
+def dist_enrgy_positive_negative_same_graph_len_site_of_the_new_site_after_duplex():
+
+    pos =read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex.csv")
+    pos['method'] = 'pos'
+    pos["len"] = pos["site"].apply(lambda x: len(x))
+    pos.reset_index(drop=True, inplace=True)
+
+    neg = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_duplex.csv")
+    neg["len"] = neg["site"].apply(lambda x: len(x))
+    neg['method'] = 'neg'
+    neg.reset_index(drop=True, inplace=True)
 
 
-clip = read_csv( "/sise/vaksler-group/IsanaRNA/miRNA_target_rules/Isana/clip_3/mrna_clean.csv")
-print("g")
+    merge_data_frame= pd.concat([pos, neg])
+
+    merge_data_frame.reset_index(inplace=True)
+    sns.set_theme(style="ticks")
+    f, ax = plt.subplots(figsize=(7, 5))
+    sns.despine(f)
+    sns.ecdfplot(data=merge_data_frame, x="len", hue="method")
+
+    plt.show()
+    plt.clf()
+
+# dist_enrgy_positive_negative_same_graph_len_site_of_the_new_site_after_duplex()
+
+
+def dist_enrgy_positive_negative_same_graph_number_mis_tail_site():
+
+    pos_duplex = read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/duplex_step/darnell_human_ViennaDuplex_duplex.csv")
+    pos_duplex['method'] = 'pos'
+
+    neg_duplex_clip= read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_duplex.csv")
+    neg_duplex_clip['method'] = 'neg_duplex_clip_without_extend'
+
+    neg_duplex_to_original_site= read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_d_original.csv")
+    neg_duplex_to_original_site['method'] = 'neg_duplex_clip_with_extend'
+
+
+    merge_data_frame= pd.concat([pos_duplex, neg_duplex_clip,neg_duplex_to_original_site])
+
+    merge_data_frame.reset_index(inplace=True)
+
+    sns.set_theme(style="ticks")
+    f, ax = plt.subplots(figsize=(7, 5))
+    sns.despine(f)
+    # sns.ecdfplot(data=merge_data_frame, x="not_match_site", hue="method")
+    plt.show()
+    plt.clf()
+
+# dist_enrgy_positive_negative_same_graph_number_mis_tail_site()
+
+
+def expermient():
+
+    df_clip = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv")
+    df_clip = df_clip[df_clip['not_match_site'] < 5]
+    df_clip = df_clip[df_clip['len_site'] > 74]
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print(df_clip.shape)
+
+    path_neg = "/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv"
+    to_csv(df_clip, path_neg)
+
+
+    df_pos = read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex.csv")
+    df_pos = df_pos[df_pos['not_match_site'] < 5]
+    path_pos = "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv"
+    to_csv(df_pos, path_pos)
+
+# expermient()
+
+def add_not_match_site_to_non_extend_site_clip_3():
+    fin = "/sise/home/efrco/efrco-master/generate_interactions/clip_interaction/clip_3.csv"
+    fout = "/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_duplex.csv"
+    from pipeline_steps.duplex_step import duplex as duplex_positive
+    # negative interactions
+    duplex_positive('ViennaDuplex', fin, fout)
+# add_not_match_site_to_non_extend_site_clip_3()
+
+from consts.global_consts import MERGE_DATA, ROOT_PATH, BIOMART_PATH, POSITIVE_PATH_FEATUERS
+
+def isana_task(name_gene):
+
+    files_name = ["human_mapping_ViennaDuplex_features.csv", "darnell_human_ViennaDuplex_features.csv","unambiguous_human_ViennaDuplex_features.csv", "qclash_melanoma_human_ViennaDuplex_features.csv"]
+
+    for file_name in files_name:
+        file_name_path = POSITIVE_PATH_FEATUERS / file_name
+        df_positive_interaction = pd.read_csv(file_name_path)
+        df_positive_interaction['len'] = df_positive_interaction['site'].apply(lambda x: len(x))
+
+        # transform the format of geneName
+        df_positive_interaction['Gene_ID'] = df_positive_interaction['Gene_ID'].apply(lambda x: x.split("|")[0])
+        df_positive_filter = df_positive_interaction[df_positive_interaction['Gene_ID'] == name_gene]
+        df_positive_filter.drop(columns= ['level_0'],inplace=True)
+        path = Path("/sise/home/efrco/")
+        name_file_new = name_gene + "_" + file_name
+        path_write = path / name_file_new
+        # to_csv(df_positive_filter, path_write )
+
+
+# isana_task(name_gene="ENSG00000079999")
+
+
+
+
+def read(name_gene):
+    # Consts
+    file_name = ROOT_PATH / "generate_interactions/tarBase/interaction.xlsx"
+    validation_string = "geneID"
+    # usecols = ['geneID', 'geneName',
+    #            'mirna', 'species', 'tissue', 'method']
+
+    df = pd.read_excel(file_name, engine='openpyxl')
+    assert df.columns[0] == validation_string, f"reader validation error: {df.columns[0]}"
+    print("Number of interactions in tarBase is:", df.shape[0])
+
+    # # filter only liver interaction that will be match to darnell
+    df_filter = df[df['positive_negative'] == 'POSITIVE']
+    df_filter = df_filter[df_filter['geneID'] ==name_gene]
+    df_filter = df_filter[df_filter['species'] == 'Homo sapiens']
+
+    path = Path("/sise/home/efrco/")
+    name_file_new = name_gene + "_" + "tarBase.csv"
+
+    path_write = path / name_file_new
+    to_csv(df_filter, path_write)
+    # print("Number of after filter is:", df.shape[0])
+
+    return df
+
+
+def tail_check():
+    clash_darnell = read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+    clip = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv")
+    print("f")
+
+# tail_check()
+
+import numpy as np
+
+
+def check_df_non(Seed_match_noncanonical, non_canonic_seed):
+    if non_canonic_seed == Seed_match_noncanonical:
+        return True
+    else:
+        return False
+
+
+def check_df_canon(non_canonic_seed, Seed_match_canonical):
+    if (non_canonic_seed == Seed_match_canonical):
+        return True
+    else:
+        return False
+def canon_noncanon():
+
+    usecols_gilad = ['mRNA_name', 'target sequence','microRNA_name', 'non_canonic_seed', 'canonic_seed']
+    d = read_csv("/sise/vaksler-group/IsanaRNA/miRNA_target_rules/benorgi/TPVOD/Data/Features/CSV/human_dataset3_duplex_positive_feature.csv")
+    gilad_data = pd.read_csv("/sise/vaksler-group/IsanaRNA/miRNA_target_rules/benorgi/TPVOD/Data/Features/CSV/human_dataset3_duplex_positive_feature.csv",  usecols=usecols_gilad)
+    gilad_data.rename(columns={"microRNA_name": "miRNA ID", "target sequence":"site"}, inplace=True)
+    gilad_data['site'] = gilad_data['site'].replace(to_replace='T', value='U', regex=True)
+    gilad_data['mRNA_name'] = gilad_data['mRNA_name'].apply(lambda x: x.split("|")[0:2])
+    gilad_data['ID'] = gilad_data['mRNA_name'].apply(lambda x: x[0])
+    gilad_data['mRNA_name'] = gilad_data['mRNA_name'].apply(lambda x: x[0] + "|" + x[1])
+
+    gilad_data.rename(columns={"mRNA_name": "Gene_ID"}, inplace=True)
+
+
+    usecols_efrat = ['Gene_ID', 'site','miRNA ID', 'Seed_match_noncanonical', 'Seed_match_canonical']
+    clash_darnell = read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+    efrat_data = pd.read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_merge/darnell_human_ViennaDuplex_features.csv",  usecols=usecols_efrat)
+    efrat_data['ID'] = efrat_data['Gene_ID'].apply(lambda x: x.split("|"))
+    efrat_data['ID'] = efrat_data['ID'].apply(lambda x: x[0])
+
+
+    intersected_df = pd.merge(gilad_data, efrat_data, how='inner', on=['miRNA ID','ID'] )
+
+    intersected_df['non_canonic_result'] = intersected_df.apply(func=get_wrapper(check_df_non,
+                                           "Seed_match_noncanonical", "non_canonic_seed"), axis=1)
+    intersected_df['canonic_result'] = intersected_df.apply(func=get_wrapper(check_df_canon,
+                                           "Seed_match_canonical", "canonic_seed",
+                                         ), axis=1)
+
+    problem   =intersected_df[intersected_df['canonic_result'] == False]
+    print(problem.shape) #1214 probelm
+
+# canon_noncanon()
+

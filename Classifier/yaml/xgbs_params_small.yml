@@ -24,4 +24,6 @@ xgbs:
     - 0.6
     verbosity:
     - 0
+    use_label_encoder:
+    - False
 

@@ -19,9 +19,10 @@ from multiprocessing import Process
 from consts.global_consts import CONFIG
 from duplex.Duplex import Duplex
 import os
+import random
 
 
-dir_after_filter = "split_after_filter"
+dir_after_filter = "split_after_filter_random"
 
 def get_end(sequence, end, extra_chars):
     return min(len(sequence), end + extra_chars)
@@ -117,7 +118,6 @@ def generate_interactions(site, Gene_ID, full_mrna, df_mirna):
         return {}, {}, valid
 
 
-
 def sub_insert_NNN(full_mrna, start, end, site):
     start = int(float(start))
     end = int(float(end))
@@ -161,12 +161,11 @@ def worker(df_mrna, df_sites, df_mirna):
 
         cut_mrna = mrna_cut
         size_param = 40
-        pervious_MEF_duplex = float('inf')
-        best_row = pd.Series()
+        new_row = pd.Series()
+        dict_windows = dict()
+        global_count = 0
         for window in range(0, len(cut_mrna) + size_param, size_param):
-            current_row = []
             sub_mrna = cut_mrna[window:window+75]
-            cd= len(cut_mrna)
             start_site = window
             end_site = window+75
             if end_site >= len(cut_mrna):
@@ -182,19 +181,22 @@ def worker(df_mrna, df_sites, df_mirna):
                 current_row, new_MEF_duplex, valid = generate_interactions(full_sub, Gene_ID, full_mrna, df_mirna)
                 if not valid:
                     continue
+
                 current_row['start'] = start_site
                 current_row['end'] = end_site
                 current_row['site'] = full_sub
-                if new_MEF_duplex <= pervious_MEF_duplex:
-                    best_row = current_row
-                    pervious_MEF_duplex = new_MEF_duplex
+                dict_windows[global_count] = current_row
 
-        if len(best_row) == 0:
+
+        if len(dict_windows) == 0:
             count += 1
             print("not found interaction for")
             continue
 
-        neg_df = neg_df.append(best_row, ignore_index=True)
+
+        values = list(dict_windows.values())
+        random_value = random.choice(values)
+        neg_df = neg_df.append(random_value, ignore_index=True)
 
     return neg_df
 
@@ -311,7 +313,7 @@ def combine_files():
     result.drop(columns=['level_0'], inplace=True)
 
     # result = drop_duplicate(result)
-    name = "darnell_human_ViennaDuplex_features_negative" + ".csv"
+    name = "random_darnell_human_ViennaDuplex_features_negative" + ".csv"
     path_df = GENERATE_DATA_PATH / name_dir / name
     # result = result.reset_index(drop=True)
     # result.drop(columns=['level_0'], inplace=True)
@@ -476,7 +478,7 @@ def run_clash(start, to):
                     break
 
         name_dir = "non_overlapping_sites_clip_data"
-        name_file = "clash_duplicate" + str(to) + ".csv"
+        name_file = "clash_" + str(to) + ".csv"
         path_df = GENERATE_DATA_PATH / name_dir / dir_after_filter / name_file
         result = pd.concat(frames)
         print(result.shape)
@@ -487,15 +489,13 @@ def run_clash(start, to):
 
 def main_run_clash():
 
-    # run_clash(start=0, to=500)
-    # run_clash(start=501, to=1000)
-    # run_clash(start=1001, to=1500)
+    run_clash(start=0, to=500)
+    run_clash(start=501, to=1000)
+    run_clash(start=1001, to=1500)
     run_clash(start=1501, to=1688)
 
 
 
-# clsah_split_gene()
-# main_run_clash()
 
 # to append more interactions
 def find_gene_apper_more_than_one_time():
@@ -510,7 +510,7 @@ def find_gene_apper_more_than_one_time():
             path = "/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/split_by_gene_clash/"
             all_files_twice.extend(find_files_clash(name, path))
 
-        find_interaction = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/darnell_human_ViennaDuplex_features_negative.csv")
+        find_interaction = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/random_darnell_human_ViennaDuplex_features_negative.csv")
         number_to_choose = clash_darnell.shape[0] - find_interaction.shape[0]
         # return all_files_twice
         return all_files_twice, number_to_choose
@@ -524,4 +524,19 @@ def main_run_twice():
         run_clash(start=int(chosen_number), to=int(chosen_number))
 
 # after that we need to check if the duplicate interaction are same
-# main_run_twice()
+
+def full_pipline_run():
+    main_run_clip()
+    main_run_clash()
+    combine_files()
+    main_run_twice()
+    combine_files()
+
+
+
+# d = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites/darnell_human_ViennaDuplex_features_random_negative.csv")
+# d1=read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites/darnell_human_ViennaDuplex_features_negative.csv")
+# print("F")
+# d0 = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/darnell_human_ViennaDuplex_features_negative.csv")
+# d = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/random_darnell_human_ViennaDuplex_features_negative.csv")
+# print("f")

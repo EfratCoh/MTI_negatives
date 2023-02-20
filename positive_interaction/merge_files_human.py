@@ -105,6 +105,9 @@ def save(df: DataFrame, file_name: str):
 
 def filter(result) -> DataFrame:
 
+    # # my append - 25/01
+    # result = result[result['region count'] == 1]
+
     df = result[result['region'].str.contains('3utr')]
     df = df.rename(columns={"miRNA ID": "miRNAID"})
 
@@ -148,14 +151,17 @@ def processing():
     # save(result_h2, "unambiguous_human_ViennaDuplex_features.csv")
     #
     # # # Data set three
-    # result_h3 = merge("darnell_human_ViennaDuplex_features")
-    # result_h3 = filter(result_h3)
-    # print("H3 after filter:", result_h3.shape)
-    # save(result_h3, "darnell_human_ViennaDuplex_features.csv")
+    result_h3 = merge("darnell_human_ViennaDuplex_features")
+    result_h3 = filter(result_h3)
+    print("H3 after filter:", result_h3.shape)
+    save(result_h3, "darnell_human_ViennaDuplex_features.csv")
 
     # Dataset four
-    fill_full_name_mirRNA("qclash_melanoma_human_ViennaDuplex_features")
-    result_h4 = merge_q_clash("qclash_melanoma_human_ViennaDuplex_features")
-    save(result_h4, "qclash_melanoma_human_ViennaDuplex_features.csv")
+    # fill_full_name_mirRNA("qclash_melanoma_human_ViennaDuplex_features")
+    # result_h4 = merge_q_clash("qclash_melanoma_human_ViennaDuplex_features")
+    # save(result_h4, "qclash_melanoma_human_ViennaDuplex_features.csv")
 
 processing()
+
+
+

@@ -13,8 +13,7 @@ import seaborn as sns
 from multiprocessing import Process
 from consts.global_consts import DATA_PATH, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS
 from utils.utilsfile import read_csv, to_csv
-
-# from utilsfile  import read_csv, to_csv
+# from utilsfile import read_csv, to_csv
 
 
 
@@ -75,10 +74,6 @@ def split_train_test(dataset_positive_name, random_state, number_split):
     train_test_dir = DATA_PATH_INTERACTIONS
 
     # Here we choose one dataset from all the data set of positive
-    # data_set_positive = MERGE_DATA /"positive_interactions_new/featuers_step"/ "darnell_human_ViennaDuplex_features.csv"
-    # data_set_positive = MERGE_DATA /"positive_interactions_new/featuers_step"/ "human_mapping_ViennaDuplex_features.csv"
-    # data_set_positive = MERGE_DATA /"positive_interactions_new/featuers_step"/ "qclash_melanoma_human_ViennaDuplex_features.csv"
-    # data_set_positive = MERGE_DATA /"positive_interactions_new/featuers_step"/ "unambiguous_human_ViennaDuplex_features.csv"
     data_set_positive = MERGE_DATA /"positive_interactions_new/featuers_step"/ f"{dataset_positive_name}.csv"
 
     # first we dived the positive interactions, the partition is const for all the train and test set.
@@ -89,11 +84,9 @@ def split_train_test(dataset_positive_name, random_state, number_split):
 
     pos_train, pos_test = train_test_split(pos, test_size=0.2, random_state=random_state)
     for method_dir in dir.iterdir():
-        print(method_dir)
         list_method = ['mockMirna', 'non_overlapping_sites']
         for dataset_file_neg in method_dir.glob("*features*"):
             # Only take the correct mock file
-
             if any(method in method_dir.stem for method in list_method):
                 correct_dataset = dataset_positive_name.split("_features")[0] + "_negative_features"
                 list_split = dataset_file_neg.stem.split("/")
@@ -102,6 +95,7 @@ def split_train_test(dataset_positive_name, random_state, number_split):
                     continue
             imbalanced_partation(pos, pos_train, pos_test, dataset_file_neg, train_test_dir, 0.2, random_state, number_split)
 
+# split_train_test(dataset_positive_name="darnell_human_ViennaDuplex_features", random_state=19, number_split=0)
 
 def test_size():
 
@@ -150,4 +144,4 @@ def train_size():
 #
 # test_size()
 # train_size()
-# split_train_test("darnell_human_ViennaDuplex_features")
+# split_train_test("darnell_human_ViennaDuplex_features", random_state=0, number_split=0)

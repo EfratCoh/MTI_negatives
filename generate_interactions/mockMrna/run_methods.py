@@ -54,31 +54,30 @@ def full_pipline(name_of_method: str, name_shuffle: str , name_of_file: str, dup
 
 def run():
     ####### mockMrna 1 approach ######
+    #5266683
 
-    from generate_interactions.mockMrna import NegativeMockMrna
-    NegativeMockMrna.main(name_shuffle='nucleotides')
-    full_pipline(name_of_method="mockMrna", name_shuffle="nucleotides_method1", name_of_file="darnell_human_ViennaDuplex_features_negative")
-
+    # from generate_interactions.mockMrna import NegativeMockMrna
+    # NegativeMockMrna.main(name_shuffle='nucleotides')
+    # full_pipline(name_of_method="mockMrna", name_shuffle="nucleotides_method1", name_of_file="darnell_human_ViennaDuplex_features_negative")
+    #
     # NegativeMockMrna.main(name_shuffle='denucleotides')
     # full_pipline(name_of_method="mockMrna", name_shuffle="denucleotides_method1", name_of_file="darnell_human_ViennaDuplex_features_negative")
-
-
+    #
 
     ####### mockMrna 2 approach ######
-
-    from pipeline_steps.duplex_step import duplex as duplex_positive
-    from generate_interactions.mockMrna import NegativeMockMrna2
-    NegativeMockMrna2.main(name_shuffle='nucleotides')
-    full_pipline(name_of_method="mockMrna", name_shuffle="nucleotides_method2", name_of_file="darnell_human_ViennaDuplex_features_negative", duplex=duplex_positive)
+    #5266684
+    # from pipeline_steps.duplex_step import duplex as duplex_positive
+    # from generate_interactions.mockMrna import NegativeMockMrna2
+    # NegativeMockMrna2.main(name_shuffle='nucleotides')
+    # full_pipline(name_of_method="mockMrna", name_shuffle="nucleotides_method2", name_of_file="darnell_human_ViennaDuplex_features_negative", duplex=duplex_positive)
     # NegativeMockMrna2.main(name_shuffle='denucleotides')
     # full_pipline(name_of_method="mockMrna", name_shuffle="denucleotides_method2", name_of_file="darnell_human_ViennaDuplex_features_negative", duplex=duplex_positive)
 
     ####### mockMrna 3 approach ######
-    #
+    #5266685
     from pipeline_steps.duplex_step import duplex as duplex_positive
     from generate_interactions.mockMrna import NegativeMockMrna3
-    #
     NegativeMockMrna3.main(name_shuffle='nucleotides')
     full_pipline(name_of_method="mockMrna", name_shuffle="nucleotides_method3", name_of_file="darnell_human_ViennaDuplex_features_negative", duplex=duplex_positive)
-    # NegativeMockMrna3.main(name_shuffle='denucleotides')
-    # full_pipline(name_of_method="mockMrna", name_shuffle="denucleotides_method3", name_of_file="darnell_human_ViennaDuplex_features_negative", duplex=duplex_positive)
+    NegativeMockMrna3.main(name_shuffle='denucleotides')
+    full_pipline(name_of_method="mockMrna", name_shuffle="denucleotides_method3", name_of_file="darnell_human_ViennaDuplex_features_negative", duplex=duplex_positive)
