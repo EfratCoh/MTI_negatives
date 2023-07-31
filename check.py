@@ -1,3 +1,5 @@
+from functools import reduce
+
 from consts.global_consts import ROOT_PATH,BIOMART_PATH, MERGE_DATA, NEGATIVE_DATA_PATH, GENERATE_DATA_PATH
 from utils.utilsfile import read_csv, to_csv
 import pandas as pd
@@ -1058,3 +1060,903 @@ def canon_noncanon():
 
 # canon_noncanon()
 
+def size_negative_interaction():
+    dir = NEGATIVE_DATA_PATH
+
+    for method_dir in dir.iterdir():
+        for dataset_file_neg in method_dir.glob("*features*"):
+            print("##########################################################################")
+            print(dataset_file_neg)
+            f = read_csv(dataset_file_neg)
+            print(f.shape)
+
+
+# size_negative_interaction()
+
+
+def check_duplicate(data):
+
+    rows = []
+    group_by_duplex = data.groupby(['mir_bulge', 'mir_inter', 'mrna_inter', 'mrna_bulge'])# create an empty DataFrame to store the randomly selected rows
+    selected_rows = pd.DataFrame()
+
+    # loop over each group and select a random row from each group
+    for name, group in group_by_duplex:
+        selected_rows = selected_rows.append(group.iloc[np.random.randint(0, len(group))])
+
+    # display the randomly selected rows
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", selected_rows.shape)
+
+
+def size_negative_interaction_duplicate():
+    dir = NEGATIVE_DATA_PATH
+
+    for method_dir in dir.iterdir():
+        for dataset_file_neg in method_dir.glob("*features*"):
+            print("##########################################################################")
+            print(dataset_file_neg)
+            f = read_csv(dataset_file_neg)
+            print(f.shape)
+            check_duplicate(f)
+            print("##############################################################################")
+
+def check_duplicate(data):
+
+    rows = []
+    group_by_duplex = data.groupby(['mir_bulge', 'mir_inter', 'mrna_inter', 'mrna_bulge'])# create an empty DataFrame to store the randomly selected rows
+    selected_rows = pd.DataFrame()
+
+    # loop over each group and select a random row from each group
+    for name, group in group_by_duplex:
+        selected_rows = selected_rows.append(group.iloc[np.random.randint(0, len(group))])
+
+    # display the randomly selected rows
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", selected_rows.shape)
+
+
+def size_negative_interaction_duplicate():
+    dir = NEGATIVE_DATA_PATH
+
+    for method_dir in dir.iterdir():
+        for dataset_file_neg in method_dir.glob("*features*"):
+            print("##########################################################################")
+            print(dataset_file_neg)
+            f = read_csv(dataset_file_neg)
+            print(f.shape)
+            check_duplicate(f)
+            print("##########################################################################")
+# size_negative_interaction_duplicate()
+
+
+import numpy as np
+def drop_duplicate(data):
+
+    rows = []
+    group_by_duplex = data.groupby(['mir_bulge', 'mir_inter', 'mrna_inter', 'mrna_bulge'])# create an empty DataFrame to store the randomly selected rows
+
+    selected_rows = pd.DataFrame()
+
+    # loop over each group and select a random row from each group
+    for name, group in group_by_duplex:
+        selected_rows = selected_rows.append(group.iloc[np.random.randint(0, len(group))])
+
+    return selected_rows
+
+# df = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv")
+# d = drop_duplicate(df)
+# to_csv(d,"/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv")
+
+
+def interaction_iterator(mir_inter,mrna_inter):
+    for i in range(len(mir_inter)):
+        if mir_inter[i] != ' ':
+            yield i, mrna_inter[i] + mir_inter[i]
+
+def count(mir_inter, mrna_inter):
+    return sum(1 for _ in interaction_iterator(mir_inter, mrna_inter))
+
+def append_num_of_base_pair():
+    # df_tarBase = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_microArray_human_negative_features.csv")
+    df_darnell = read_csv(
+        "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+    # df_non_overlapping_sites = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/non_overlapping_sites/non_overlapping_sites_darnell_human_ViennaDuplex_negative_features.csv")
+    # df_non_overlapping_sites_random = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/non_overlapping_sites/non_overlapping_sites_random_darnell_human_ViennaDuplex_negative_features.csv")
+    df_mock_Mirna = read_csv(
+        "/sise/home/efrco/efrco-master/data/negative_interactions/mockMirna/mockMirna_darnell_human_ViennaDuplex_negative_features.csv")
+    # df_mockMrna_di_mrna = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/mockMrna/mockMrna_denucleotides_method1_darnell_human_ViennaDuplex_negative_features.csv")
+    # df_mockMrna_di_site = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/mockMrna/mockMrna_denucleotides_method2_darnell_human_ViennaDuplex_negative_features.csv")
+    # df_mockMrna_di_fragment_mockMirna = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/mockMrna/mockMrna_denucleotides_method3_darnell_human_ViennaDuplex_negative_features.csv")
+    # df_clip = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv")
+    # df_non_overlapping_sites_clip_data_random = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/non_overlapping_sites_clip_data/non_overlapping_sites_clip_data_random_darnell_human_ViennaDuplex_negative_features.csv")
+
+    # dfs = [df_darnell, df_tarBase, df_non_overlapping_sites, df_non_overlapping_sites_random, df_mock_Mirna,
+    #        df_mockMrna_di_mrna, df_mockMrna_di_site, df_mockMrna_di_fragment_mockMirna, df_clip,
+    #        df_non_overlapping_sites_clip_data_random]
+    dfs = [df_darnell, df_mock_Mirna
+           ]
+    name_dfs = ["positive interactions" , 'tarBase_microArray',
+                "non_overlapping_sites", "non_overlapping_sites_random",
+                "mockMiRNA",
+                "mockMRNA_di_mRNA", "mockMRNA_di_site", "mockMRNA_di_fragment_mockMiRNA",
+                "clip_interaction",
+                "non_overlapping_sites_clip_data_random"]
+
+    labels = ["negative"]
+    seed_types = ["canonic", "non"]
+    strengthes = ["p_10", "p_11_16", "p_17"]
+    i = pd.MultiIndex.from_product([seed_types, strengthes], names=["seed_type", "strength"])
+    res_df = pd.DataFrame(index=i)
+
+    for i,df  in enumerate(dfs):
+        df['num_of_pairs'] = df.apply(lambda row: count(row['mir_inter'], row['mrna_inter']), axis=1)
+        df['Seed_match_canonical'] = df.apply(lambda row: True if row['Seed_match_canonical'] else False,
+                                           axis=1)
+        df['Seed_match_noncanonical'] = df.apply(lambda row: True if row['Seed_match_noncanonical'] else False,
+                                              axis=1)
+        p_canonic = df["Seed_match_canonical"]
+        p_non_canonic = df["Seed_match_noncanonical"]
+
+        d = df[p_canonic | p_non_canonic]
+        p_canonic = d[p_canonic]
+        p_non_canonic = d[p_non_canonic]
+
+        p_10 = d[d["num_of_pairs"] <= 10]
+        p_11_16 = d[(d["num_of_pairs"] >= 11) & (d["num_of_pairs"] <= 16)]
+        p_17 = d[d["num_of_pairs"] >= 17]
+
+        res_df.loc[( "canonic", "p_10"),name_dfs[i]] = len(set(p_canonic.index).intersection(set(p_10.index)))
+        res_df.loc[( "canonic", "p_11_16"), name_dfs[i]] = len(
+            set(p_canonic.index).intersection(set(p_11_16.index)))
+        res_df.loc[("canonic", "p_17"), name_dfs[i]] = len(set(p_canonic.index).intersection(set(p_17.index)))
+
+        res_df.loc[("non", "p_10"), name_dfs[i]] = len(set(p_non_canonic.index).intersection(set(p_10.index)))
+        res_df.loc[("non", "p_11_16"), name_dfs[i]] = len(
+            set(p_non_canonic.index).intersection(set(p_11_16.index)))
+        res_df.loc[("non", "p_17"), name_dfs[i]] = len(set(p_non_canonic.index).intersection(set(p_17.index)))
+        print(res_df)
+
+
+
+# append_num_of_base_pair()
+
+
+
+from functools import reduce
+
+from consts.global_consts import ROOT_PATH,BIOMART_PATH, MERGE_DATA, NEGATIVE_DATA_PATH, GENERATE_DATA_PATH
+from utils.utilsfile import read_csv, to_csv
+import pandas as pd
+from pathlib import Path
+from utils.utilsfile import apply_in_chunks, get_wrapper, read_csv, to_csv
+
+def cc():
+    file_name = BIOMART_PATH / "human_3utr.csv"
+    df_human_3utr = pd.read_csv(file_name)
+    df_human_3utr['len'] = df_human_3utr['sequence'].apply(lambda x: len(x))
+    df_new = df_human_3utr[df_human_3utr['len']<40]
+    print("dd")
+
+
+
+def checkMockMirna():
+    file_name = ROOT_PATH / "data/positive_interactions/positive_interactions_new/featuers_step/"
+    file_name = ROOT_PATH / "data/positive_interactions/positive_interactions_merge/"
+
+    tmp_base = ROOT_PATH / "generate_interactions/mockMirna/"
+    features_mock = ROOT_PATH / "data/negative_interactions/mockMirna"
+    files = list(features_mock.glob('*features*.csv'))
+    run_list = []
+    for p in files:
+        name = p.name.split('_negative_features.csv')[0] + '_features.csv'
+        name = name.split('mockMirna_')[1]
+        mock_file = name.split('.csv')[0] + '_negative.csv'
+        mock_file = tmp_base / mock_file
+        negative_features = features_mock / p
+        pos = file_name / name
+
+        duplex_name = p.name.split('_features.csv')[0] + '_duplex.csv'
+        duplex_file = features_mock / duplex_name
+
+        normalization_name = p.name.split('_features.csv')[0] + '_normalization.csv'
+        normalization_file = features_mock / normalization_name
+
+        df_pos = read_csv(pos)
+        # df_pos = df_pos[df_pos['sequence'].apply(lambda x: len(x))<40]
+        print(df_pos.shape)
+
+        df_neg_features = read_csv(negative_features)
+        df_mock = read_csv(mock_file)
+        # d = df_mock['canonic_seed']
+        # print(d)
+        df_neg_duplex = read_csv(duplex_file)
+        df_neg_normalization = read_csv(normalization_file)
+
+        print(df_pos.shape[0] == df_mock.shape[0])
+        print(df_pos.shape[0] == df_neg_features.shape[0])
+        print("neg_mock_features", df_neg_features.shape[0])
+        print("pos", df_pos.shape[0])
+        print("mock", df_mock.shape[0])
+        print("duplex", df_neg_duplex.shape[0])
+        print("normalization", df_neg_normalization.shape[0])
+# checkMockMirna()
+# s_pos= read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+# print(s_pos.shape)
+# s_pos = read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_merge/qclash_melanoma_human_ViennaDuplex_features.csv")
+# s_neg =read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/mockMirna/mockMirna_qclash_melanoma_human_ViennaDuplex_negative_features.csv")
+# # print("s_pos: ", s_pos.shape)
+# s_neg = read_csv("/sise/home/efrco/efrco-master/generate_interactions/mockMirna/qclash_melanoma_human_ViennaDuplex_features_negative.csv")
+# print("s_neg: ", s_neg.shape)
+
+
+
+def checkTarBase():
+    tmp_base = ROOT_PATH / "generate_interactions/tarBase/tarBase_human_negative.csv"
+    name = "tarBase_human_negative"
+    features = ROOT_PATH / "data/negative_interactions/tarBase"
+    files = list(features.glob('*features*.csv'))
+    for p in files:
+        negative_features = features / p
+        pos = tmp_base
+
+        duplex_name = name + '_duplex.csv'
+        duplex_file = features / duplex_name
+        duplex = read_csv(duplex_file)
+        normal_name = name + '_normalization.csv'
+        normal_file= features / normal_name
+        normal = read_csv(normal_file)
+
+        df_pos = read_csv(pos)
+        df_neg_features = read_csv(negative_features)
+        print(df_pos.shape[0] == df_neg_features.shape[0])
+        print("neg_mock_features", df_neg_features.shape[0])
+        print("pos", df_pos.shape[0])
+        print("duplex:", duplex.shape[0])
+        print("normal:", normal.shape[0])
+
+
+
+def cleanMock():
+
+    tmp_base = ROOT_PATH / "generate_interactions/mockMirna/"
+    features_mock = ROOT_PATH / "data/negative_interactions/mockMirna"
+    files = list(features_mock.glob('*features*.csv'))
+    run_list = []
+    for p in files:
+        name = p.name.split('_negative_features.csv')[0] + '_features.csv'
+        name = name.split('mockMirna_')[1]
+        # mock file
+        mock_file = name.split('.csv')[0] + '_negative.csv'
+        mock_file = tmp_base / mock_file
+        df_mock = read_csv(mock_file)
+        df_mock.drop(labels=['canonic_seed', 'non_canonic_seed'], axis=1, inplace=True)
+        to_csv(df_mock,mock_file)
+
+
+        negative_features = features_mock / p
+        df_neg_features = read_csv(negative_features)
+        df_neg_features.drop(labels=['canonic_seed', 'non_canonic_seed'], axis=1, inplace=True)
+        to_csv(df_neg_features, negative_features)
+
+
+        duplex_name = p.name.split('_features.csv')[0] + '_duplex.csv'
+        duplex_file = features_mock / duplex_name
+        df_neg_duplex = read_csv(duplex_file)
+        df_neg_duplex.drop(labels=['canonic_seed', 'non_canonic_seed'], axis=1, inplace=True)
+        to_csv(df_neg_duplex, duplex_file)
+
+        normalization_name = p.name.split('_features.csv')[0] + '_normalization.csv'
+        normalization_file = features_mock / normalization_name
+        df_neg_normalization = read_csv(normalization_file)
+        df_neg_normalization.drop(labels=['canonic_seed', 'non_canonic_seed'], axis=1, inplace=True)
+        to_csv(df_neg_normalization, normalization_file)
+
+        # site_name = mockMrna.name.split('_features.csv')[0] + '_site.csv'
+        # site_file = features_mock / site_name
+        # df_neg_site = read_csv(site_file)
+        # df_neg_site.drop(labels=['canonic_seed', 'non_canonic_seed'], axis=1, inplace=True)
+        # to_csv(df_neg_site, site_file)
+
+
+
+def filter_clash_interaction():
+
+    files_name = ["qclash_melanoma_human_ViennaDuplex_features.csv"]
+    df_name = "/sise/home/efrco/efrco-master/generate_interactions/tarBase/tarBase_human_negative.csv"
+    df = read_csv(df_name)
+    for file_name in files_name:
+        file_name_path = MERGE_DATA / file_name
+        usecols = ['miRNA ID', 'Gene_ID']
+        df_positive_interaction = pd.read_csv(file_name_path, usecols=usecols)
+
+        # transform the format of geneName
+        # df_positive_interaction['Gene_ID'] = df_positive_interaction['Gene_ID'].apply(lambda x: x.split("|")[0])
+        # df['Gene_ID'] = df['Gene_ID'].apply(lambda x: x.split("|")[0])
+
+        # Intersection to find negative interaction wiche exists in clash poitive interacitons
+        intersected_df = pd.merge(df, df_positive_interaction, how='inner', on=['miRNA ID', 'Gene_ID'])
+
+        # remove interactions that exists in both of the dataset
+        print("number of rows to remove:" + str(intersected_df.shape[0]))
+        print(list(intersected_df['key']))
+        print("number of rows before:" + str(df.shape[0]))
+        new = df[(~df.key.isin(intersected_df.key))]
+        print("number of rows after:" + str(new.shape[0]))
+        df = new
+        # to_csv(df, df_name)
+    return df
+
+
+def checkTarBase2():
+    tmp_base = ROOT_PATH / "generate_interactions/tarBase/tarBase_human_negative.csv"
+    name = "tarBase_human_negative"
+    features = ROOT_PATH / "data/negative_interactions/tarBase"
+    files = list(features.glob('*features*.csv'))
+    for p in files:
+        negative_features = features / p
+        pos = tmp_base
+
+        duplex_name = name + '_duplex.csv'
+        duplex_file = features / duplex_name
+        duplex = read_csv(duplex_file)
+        normal_name = name + '_normalization.csv'
+        normal_file = features / normal_name
+        normal = read_csv(normal_file)
+
+        df_pos = read_csv(pos)
+        df_neg_features = read_csv(negative_features)
+        print(df_pos.shape[0] == df_neg_features.shape[0])
+        print("neg_mock_features", df_neg_features.shape[0])
+        print("pos", df_pos.shape[0])
+        print("duplex:", duplex.shape[0])
+        print("normal:", normal.shape[0])
+
+
+#
+# file= "/sise/home/efrco/efrco-master/data/negative_interactions/mockMirna/mockMirna_unambiguous_human_ViennaDuplex_negative_normalization.csv"
+# file_open= read_csv(file)
+# print("Ddddd")
+
+from tableone import TableOne
+
+import matplotlib as mpl
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+import math
+
+
+def KL(P, Q):
+    """ Epsilon is used here to avoid conditional code for
+    checking that neither P nor Q is equal to 0. """
+    epsilon = 0.00001
+
+    # You may want to instead make copies to avoid changing the np arrays.
+    P = P + epsilon
+    Q = Q + epsilon
+
+    divergence = np.sum(P * np.log(P / Q))
+    return divergence
+
+
+def size_df(df1,df2):
+    size_df1 = len(df1)
+    size_df2 = len(df2)
+
+    # If df1 is larger, downsample it to the size of df2
+    if size_df1 > size_df2:
+        df1_downsampled = df1.sample(n=size_df2, random_state=1)
+        # df1_downsampled now has the same size as df2
+        return df1_downsampled, df2
+
+    # If df2 is larger, downsample it to the size of df1
+    if size_df2 > size_df1:
+        df2_downsampled = df2.sample(n=size_df1, random_state=1)
+        return df1, df2_downsampled
+
+
+############################################Case one##########################################################
+def tar_base_clip_change(name_feature, discrete=0):
+    print(name_feature)
+    train = read_csv(
+        "/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_microArray_human_negative_features.csv")
+    test = read_csv(
+        "/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv")
+    train, test= size_df(train, test)
+
+
+    if discrete == 0:
+        statistic, p_value = stats.ranksums(train[name_feature], test[name_feature], alternative='two-sided')
+        print("p-value:", p_value)
+
+        normalized_src_df = (train[name_feature] - train[name_feature].min()) / (
+                    train[name_feature].max() - train[name_feature].min())
+        normalized_trg_df = (test[name_feature] - test[name_feature].min()) / (
+                    test[name_feature].max() - test[name_feature].min())
+        statistic, p_value = stats.wilcoxon(normalized_src_df, normalized_trg_df)
+
+        # if res != 0:
+        #     res = math.log(res, 10)
+
+        # Print results
+        print(name_feature)
+        print("Wilcoxon Rank-Sum Test:")
+        # print("Statistic:", statistic)
+        print("p-value:", p_value)
+    else:
+        train_weight = train[name_feature].value_counts(normalize=True).to_frame()
+        test_weight = test[name_feature].value_counts(normalize=True).to_frame()
+        # train_weight = df_train['miRNA ID'].value_counts(normalize=True)
+        # test_weight = df_test['miRNA ID'].value_counts(normalize=True)
+        join_result = pd.merge(train_weight, test_weight, how='outer',
+                               left_index=True, right_index=True)
+        join_result.fillna(0, inplace=True)
+        p = join_result.iloc[:, 0].values
+        q = join_result.iloc[:, 1].values
+        kl_divergence = KL(p, q)
+
+        # Calculate the observed frequencies
+        observed_freq1 = np.bincount(train[name_feature])
+        observed_freq2 = np.bincount(test[name_feature])
+
+        # Make sure the observed frequencies have the same length
+        max_len = max(len(observed_freq1), len(observed_freq2))
+        observed_freq1 = np.pad(observed_freq1, (0, max_len - len(observed_freq1)))
+        observed_freq2 = np.pad(observed_freq2, (0, max_len - len(observed_freq2)))
+
+        # Add a small constant to avoid division by zero
+        epsilon = 0.5
+        observed_freq1 = np.add(observed_freq1, epsilon, dtype=np.float64)
+        observed_freq2 = np.add(observed_freq2, epsilon, dtype=np.float64)
+
+        # Calculate the expected frequencies (assuming equal proportions)
+        expected_freq = (observed_freq1 + observed_freq2) / 2
+
+        # Perform Chi-Square test
+        stat, p_value = stats.chisquare(observed_freq1, expected_freq)
+
+        # Print the test statistic and p-value
+        print("Chi-Square Test Statistic: ", stat)
+        print("P-value: ", p_value)
+        print("kl_divergence Test Statistic: ", kl_divergence)
+
+        # print("P-value: ", p_value)
+
+    # df_tarBase[name_feature].plot.kde(label='tarBase')
+    # df_clip[name_feature].plot.kde(label='clip')
+    # plt.legend()
+    # plt.xlabel('Value')
+    # plt.ylabel('Density')
+    # plt.title(name_feature)
+    # plt.show()
+
+# tar_base_clip_change(name_feature='Energy_MEF_Duplex')
+# tar_base_clip_change(name_feature='Energy_MEF_local_target_normalized')
+# tar_base_clip_change(name_feature='MRNA_Target_GG_comp')
+# tar_base_clip_change(name_feature='miRNAMatchPosition_4', discrete=1)
+# tar_base_clip_change(name_feature='miRNAPairingCount_X3p_GC',  discrete=1)
+# tar_base_clip_change(name_feature='miRNAMatchPosition_3',  discrete=1)
+# tar_base_clip_change(name_feature='MRNA_Target_G_comp'])
+# tar_base_clip_change(name_feature='miRNAPairingCount_Total_GU', discrete=1)
+
+
+def table_one_tarbase_clip():
+    # train = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_microArray_human_negative_features.csv")
+    train = read_csv("/sise/home/efrco/efrco-master/data/test/underSampling/0/tarBase_microArray_human_negative_features_test_underSampling_method_0.csv")
+    train = train[train['Label']==0]
+
+    train['name'] = 'train'
+    # test = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/mockMirna/mockMirna_darnell_human_ViennaDuplex_negative_features.csv")
+
+    test = read_csv("/sise/home/efrco/efrco-master/data/test/underSampling/0/clip_interaction_clip_3_negative_features_test_underSampling_method_0.csv")
+    test = test[test['Label']==0]
+
+    test['name'] = 'test'
+    # train, test = size_df(train, test)
+    df_combined = pd.concat([train, test], axis=0).reset_index(drop=True)
+    columns =['Energy_MEF_Duplex', 'Energy_MEF_local_target_normalized', 'MRNA_Target_GG_comp','miRNAMatchPosition_4','miRNAPairingCount_X3p_GC',
+              'miRNAMatchPosition_3','MRNA_Target_G_comp','miRNAPairingCount_Total_GU']
+    categorical = ['miRNAMatchPosition_4','miRNAPairingCount_X3p_GC','miRNAMatchPosition_3'
+                ,'miRNAPairingCount_Total_GU']
+    nonnormal= ['Energy_MEF_Duplex','Energy_MEF_local_target_normalized']
+
+    groupby = ['name']
+    mytable = TableOne(df_combined,columns=columns, categorical=categorical, groupby=groupby,nonnormal=nonnormal,
+                        pval=True, htest_name=True)
+    print(mytable.tabulate(tablefmt="fancy_grid"))
+# table_one_tarbase_clip()
+
+###########################################Case 2#####################################################
+
+def non_overlapping_sites_mockmrna_change(name_feature):
+    df_non_overlapping = read_csv(
+        "/sise/home/efrco/efrco-master/data/negative_interactions/non_overlapping_sites/non_overlapping_sites_random_darnell_human_ViennaDuplex_negative_features.csv")
+    mock_mrna = read_csv(
+        "/sise/home/efrco/efrco-master/data/negative_interactions/mockMrna/mockMrna_denucleotides_method1_darnell_human_ViennaDuplex_negative_features.csv")
+
+    statistic, p_value = stats.ranksums(df_non_overlapping[name_feature], mock_mrna[name_feature],
+                                        alternative='two-sided')
+
+    normalized_src_df = (df_non_overlapping[name_feature] - df_non_overlapping[name_feature].min()) / (
+                df_non_overlapping[name_feature].max() - df_non_overlapping[name_feature].min())
+    normalized_trg_df = (mock_mrna[name_feature] - mock_mrna[name_feature].min()) / (
+                mock_mrna[name_feature].max() - mock_mrna[name_feature].min())
+    statistic, p_value = stats.ranksums(normalized_src_df, normalized_trg_df, alternative='two-sided')
+
+    # if res != 0:
+    #     res = math.log(res, 10)
+
+    # Print results
+    print(name_feature)
+    print("Wilcoxon Rank-Sum Test:")
+    # print("Statistic:", statistic)
+    print("p-value:", p_value)
+
+    df_non_overlapping[name_feature].plot.kde(label='non_overlapping')
+    mock_mrna[name_feature].plot.kde(label='mock_mrna')
+    plt.legend()
+    plt.xlabel('Value')
+    plt.ylabel('Density')
+    plt.title(name_feature)
+    plt.show()
+#
+# non_overlapping_sites_mockmrna_change(name_feature='Energy_MEF_Duplex')
+# non_overlapping_sites_mockmrna_change(name_feature='miRNAPairingCount_Total_basepair')
+# non_overlapping_sites_mockmrna_change(name_feature='Seed_match_GU_2_7')
+# non_overlapping_sites_mockmrna_change(name_feature='MRNA_Target_G_comp')
+# non_overlapping_sites_mockmrna_change(name_feature='miRNAPairingCount_Total_GU')
+# non_overlapping_sites_mockmrna_change(name_feature='MRNA_Target_GG_comp')
+# non_overlapping_sites_mockmrna_change(name_feature='Energy_MEF_local_target_normalized')
+# non_overlapping_sites_mockmrna_change(name_feature='miRNAPairingCount_X3p_mismatch')
+# non_overlapping_sites_mockmrna_change(name_feature='Energy_MEF_local_target')
+
+
+def table_one_non_overlapping_sites_mockmrna_change():
+    # train = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_microArray_human_negative_features.csv")
+    train = read_csv("/sise/home/efrco/efrco-master/data/test/underSampling/0/non_overlapping_sites_random_darnell_human_ViennaDuplex_negative_features_test_underSampling_method_0.csv")
+    train = train[train['Label']==0]
+
+    train['name'] = 'train'
+    test = read_csv("/sise/home/efrco/efrco-master/data/test/underSampling/0/mockMrna_denucleotides_method1_darnell_human_ViennaDuplex_negative_features_test_underSampling_method_0.csv")
+    test = test[test['Label']==0]
+
+    test['name'] = 'test'
+    # train, test = size_df(train, test)
+    df_combined = pd.concat([train, test], axis=0).reset_index(drop=True)
+    columns =['Energy_MEF_Duplex', 'miRNAPairingCount_Total_basepair','Seed_match_GU_2_7','MRNA_Target_G_comp',
+              'miRNAPairingCount_Total_GU','MRNA_Target_GG_comp','Energy_MEF_local_target_normalized','Energy_MEF_local_target'
+              ,'miRNAPairingCount_X3p_mismatch']
+    categorical = ['miRNAPairingCount_Total_basepair','Seed_match_GU_2_7','miRNAPairingCount_Total_GU','miRNAPairingCount_X3p_mismatch']
+    nonnormal= ['Energy_MEF_Duplex','Energy_MEF_local_target_normalized','Energy_MEF_local_target']
+
+    groupby = ['name']
+    mytable = TableOne(df_combined,columns=columns, categorical=categorical, groupby=groupby,nonnormal=nonnormal,
+                        pval=True, htest_name=True)
+    print(mytable.tabulate(tablefmt="fancy_grid"))
+# table_one_non_overlapping_sites_mockmrna_change()
+
+###########################################Case 3######################################################
+
+
+def tatBase_mockimrna_change(name_feature,discrete=0):
+
+    train= read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_microArray_human_negative_features.csv")
+    train['name'] = 'train'
+    test = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/mockMirna/mockMirna_darnell_human_ViennaDuplex_negative_features.csv")
+    test['name'] = 'test'
+    train, test= size_df(train, test)
+    df_combined = pd.concat([train, test], axis=0)
+
+    normalized_src_df = (train[name_feature] - train[name_feature].min()) / (
+                train[name_feature].max() - train[name_feature].min())
+    normalized_trg_df = (test[name_feature] - test[name_feature].min()) / (
+                test[name_feature].max() - test[name_feature].min())
+
+    if discrete ==0:
+        statistic, p_value = stats.spearmanr(normalized_src_df, normalized_trg_df, alternative='two-sided')
+
+        print("p-value:", p_value)
+    else:
+        train_weight = normalized_src_df.value_counts(normalize=True).to_frame()
+        test_weight = normalized_trg_df.value_counts(normalize=True).to_frame()
+
+        join_result = pd.merge(train_weight, test_weight, how='outer',
+                               left_index=True, right_index=True)
+        join_result.fillna(0, inplace=True)
+        p = join_result.iloc[:, 0].values
+        q = join_result.iloc[:, 1].values
+        kl_divergence = KL(p, q)
+
+        # Calculate the observed frequencies
+        observed_freq1 = np.bincount(train[name_feature])
+        observed_freq2 = np.bincount(test[name_feature])
+
+        # Make sure the observed frequencies have the same length
+        max_len = max(len(observed_freq1), len(observed_freq2))
+        observed_freq1 = np.pad(observed_freq1, (0, max_len - len(observed_freq1)))
+        observed_freq2 = np.pad(observed_freq2, (0, max_len - len(observed_freq2)))
+
+        # Add a small constant to avoid division by zero
+        epsilon = 0.5
+        observed_freq1 = np.add(observed_freq1, epsilon, dtype=np.float64)
+        observed_freq2 = np.add(observed_freq2, epsilon, dtype=np.float64)
+
+        # Calculate the expected frequencies (assuming equal proportions)
+        expected_freq = (observed_freq1 + observed_freq2) / 2
+
+        # Perform Chi-Square test
+        stat, p_value = stats.chisquare(observed_freq1, expected_freq)
+
+        # Print the test statistic and p-value
+        print("Chi-Square Test Statistic: ", stat)
+        print("P-value: ", p_value)
+        print("kl_divergence Test Statistic: ", kl_divergence)
+
+    # if res != 0:
+    #     res = math.log(res, 10)
+
+    # Print results
+    print(name_feature)
+    print("Wilcoxon Rank-Sum Test:")
+    # print("Statistic:", statistic)
+    if p_value<0.01:
+        print("True")
+    train[name_feature].plot.kde(label='df_tarBase')
+    test[name_feature].plot.kde(label='df_mockMirna')
+    plt.legend()
+    plt.xlabel('Value')
+    plt.ylabel('Density')
+    plt.title(name_feature)
+    plt.show()
+
+# tatBase_mockimrna_change(name_feature='Seed_match_GU_2_7', discrete=0) # same for rank sum test
+# tatBase_mockimrna_change(name_feature='Energy_MEF_Duplex')
+# tatBase_mockimrna_change(name_feature='Seed_match_interactions_2_7') #same
+# tatBase_mockimrna_change(name_feature='Energy_MEF_local_target_normalized')
+# tatBase_mockimrna_change(name_feature='miRNAPairingCount_Total_AU', discrete=1) # same
+# tatBase_mockimrna_change(name_feature='Seed_match_GU_3_8', discrete=0)
+
+# goos case
+def table_one_tarbase_mock():
+    # train = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_microArray_human_negative_features.csv")
+    train = read_csv("/sise/home/efrco/efrco-master/data/test/underSampling/0/tarBase_microArray_human_negative_features_test_underSampling_method_0.csv")
+    train = train[train['Label']==0]
+
+    train['name'] = 'train'
+    # test = read_csv(
+    #     "/sise/home/efrco/efrco-master/data/negative_interactions/mockMirna/mockMirna_darnell_human_ViennaDuplex_negative_features.csv")
+
+    test = read_csv("/sise/home/efrco/efrco-master/data/test/underSampling/0/mockMirna_darnell_human_ViennaDuplex_negative_features_test_underSampling_method_0.csv")
+    test = test[test['Label']==0]
+
+    test['name'] = 'test'
+    # train, test = size_df(train, test)
+    df_combined = pd.concat([train, test], axis=0).reset_index(drop=True)
+    columns = ['Seed_match_GU_2_7','Seed_match_GU_3_8' ,'Seed_match_interactions_2_7','miRNAPairingCount_Total_AU',
+               'Energy_MEF_Duplex', 'Energy_MEF_local_target_normalized', 'miRNAPairingCount_Total_GC',
+	'miRNAMatchPosition_5', 'miRNAPairingCount_X3p_GC']
+    categorical = ['Seed_match_GU_2_7','Seed_match_GU_3_8' ,'Seed_match_interactions_2_7',
+	'miRNAMatchPosition_5','miRNAPairingCount_X3p_GC','miRNAPairingCount_Total_GC','miRNAPairingCount_Total_AU']
+    nonnormal=['Seed_match_GU_2_7','Seed_match_GU_3_8' ,'Seed_match_interactions_2_7','miRNAPairingCount_Total_AU', 'Energy_MEF_Duplex', 'Energy_MEF_local_target_normalized', 'miRNAPairingCount_Total_GC',
+	'miRNAMatchPosition_5', 'miRNAPairingCount_X3p_GC']
+
+    groupby = ['name']
+    mytable = TableOne(df_combined,columns=columns, categorical=categorical, groupby=groupby,nonnormal=nonnormal,
+                        pval=True, htest_name=True)
+    print(mytable.tabulate(tablefmt="fancy_grid"))
+# table_one_tarbase_mock()
+
+
+def non_overlapping_random_non_clip_random(name_feature, discrete=0):
+
+    train = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/non_overlapping_sites/non_overlapping_sites_random_darnell_human_ViennaDuplex_negative_features.csv")
+    test = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/non_overlapping_sites_clip_data/non_overlapping_sites_clip_data_darnell_human_ViennaDuplex_negative_features.csv")
+    train, test= size_df(train, test)
+
+    if discrete==0:
+        statistic, p_value = stats.ranksums(train[name_feature], test[name_feature], alternative='two-sided')
+        print("p-value:", p_value)
+
+        normalized_src_df = (train[name_feature] - train[name_feature].min()) / (train[name_feature].max() - train[name_feature].min())
+        normalized_trg_df = (test[name_feature] - test[name_feature].min()) / (test[name_feature].max() - test[name_feature].min())
+        statistic, p_value = stats.wilcoxon(normalized_src_df, normalized_trg_df)
+
+        # if res != 0:
+        #     res = math.log(res, 10)
+
+        # Print results
+        print(name_feature)
+        print("Wilcoxon Rank-Sum Test:")
+        # print("Statistic:", statistic)
+        print("p-value:", p_value)
+    else:
+            train_weight = train[name_feature].value_counts(normalize=True).to_frame()
+            test_weight = test[name_feature].value_counts(normalize=True).to_frame()
+            # train_weight = df_train['miRNA ID'].value_counts(normalize=True)
+            # test_weight = df_test['miRNA ID'].value_counts(normalize=True)
+            join_result = pd.merge(train_weight, test_weight, how='outer',
+                                   left_index=True, right_index=True)
+            join_result.fillna(0, inplace=True)
+            p = join_result.iloc[:, 0].values
+            q = join_result.iloc[:, 1].values
+            kl_divergence = KL(p, q)
+
+            # Calculate the observed frequencies
+            observed_freq1 = np.bincount(train[name_feature])
+            observed_freq2 = np.bincount(test[name_feature])
+
+            # Make sure the observed frequencies have the same length
+            max_len = max(len(observed_freq1), len(observed_freq2))
+            observed_freq1 = np.pad(observed_freq1, (0, max_len - len(observed_freq1)))
+            observed_freq2 = np.pad(observed_freq2, (0, max_len - len(observed_freq2)))
+
+            # Add a small constant to avoid division by zero
+            epsilon = 0.5
+            observed_freq1 = np.add(observed_freq1, epsilon, dtype=np.float64)
+            observed_freq2 = np.add(observed_freq2, epsilon, dtype=np.float64)
+
+            # Calculate the expected frequencies (assuming equal proportions)
+            expected_freq = (observed_freq1 + observed_freq2) / 2
+
+            # Perform Chi-Square test
+            stat, p_value = stats.chisquare(observed_freq1, expected_freq)
+
+            # Print the test statistic and p-value
+            print("Chi-Square Test Statistic: ", stat)
+            print("P-value: ", p_value)
+            print("kl_divergence Test Statistic: ", kl_divergence)
+
+            statistic, p_value = stats.ks_2samp(train[name_feature], test[name_feature])
+            print("ks_2samp", p_value)
+
+            # print("P-value: ", p_value)
+
+
+
+    train[name_feature].plot.kde(label='non_overlapping')
+    test[name_feature].plot.kde(label='non_clip')
+    plt.legend()
+    plt.xlabel('Value')
+    plt.ylabel('Density')
+    plt.title(name_feature)
+    plt.show()
+
+# non_overlapping_random_non_clip_random(name_feature='Seed_match_GU_2_7', discrete=1 )
+# # non_overlapping_random_non_clip_random(name_feature='Energy_MEF_Duplex', )
+# non_overlapping_random_non_clip_random(name_feature='Seed_match_interactions_2_7', discrete=1)
+# # non_overlapping_random_non_clip_random(name_feature='Energy_MEF_local_target_normalized')
+# # non_overlapping_random_non_clip_random(name_feature='Seed_match_GU_3_8', discrete=1)
+# non_overlapping_random_non_clip_random(name_feature='miRNAPairingCount_Total_AU', discrete=1)
+# non_overlapping_random_non_clip_random(name_feature='miRNAPairingCount_Total_GC', discrete=1)
+# non_overlapping_random_non_clip_random(name_feature='miRNAMatchPosition_5', discrete=1)
+# non_overlapping_random_non_clip_random(name_feature='Energy_MEF_local_target')
+
+
+from consts.global_consts import DATA_PATH, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS
+
+def size_negative():
+    dir = NEGATIVE_DATA_PATH
+    train_test_dir = DATA_PATH_INTERACTIONS
+
+    for method_dir in dir.iterdir():
+        list_method = ['mockMirna', 'non_overlapping_sites', 'TarBase','mic']
+        for dataset_file_neg in method_dir.glob("*features*"):
+            # Only take the correct mock file
+            # if any(method in method_dir.stem for method in list_method):
+            list_split = dataset_file_neg.stem.split("/")
+            list_split = [str(s) for s in list_split]
+            c = read_csv(dataset_file_neg)
+            print(dataset_file_neg)
+            print(c.shape)
+            print("#####################################################################")
+
+# size_negative()
+
+#
+import os
+
+#
+# for i in range(0,20):
+#     directory = "/sise/home/efrco/efrco-master/data/test/one_class_svm/"
+#
+#     # Path
+#     path = os.path.join(directory, str(i))
+#
+#     os.mkdir(path)
+#     print("Directory '% s' created" % directory)
+#
+
+def distrubution():
+
+
+    #################### TarBase ##################################
+
+    file_test_clip = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv")
+    file_train_tarBase = read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_microArray_human_negative_features.csv")
+    file_train_tarBase['Label'] = 1
+    file_test_clip['Label'] = 0
+    # Reset the index of each DataFrame# Reset index and columns of each DataFrame
+    # Reset index and rename axis for each DataFrame
+    file_train_tarBase = file_train_tarBase.reset_index(drop=True)
+    file_test_clip = file_test_clip.reset_index(drop=True)
+
+    file_train_tarBase = file_train_tarBase.rename_axis(columns=None)
+    file_test_clip = file_test_clip.rename_axis(columns=None)
+    df = pd.concat([file_test_clip, file_train_tarBase])
+
+
+    sns.set_theme(style="whitegrid")
+    f, ax = plt.subplots(figsize=(9, 9))
+    # col_new = df[df[col] < 0.05]
+    sns.despine(f)
+
+    sns.histplot(
+        df,
+        x="Energy_MEF_Duplex", hue="Label",
+        # multiple="stack",
+        # palette="light:m_r",
+        # linewidth=.2,
+        # log_scale=False,
+    )
+    # ax.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
+    # ax.set_xticks([0, 0.05, 0.1, 0.15])
+    # title = col + "_tarbase"
+    # plt.title(title)
+    plt.show()
+    plt.clf()
+
+
+    # file_train_darnell = Path("/sise/home/efrco/efrco-master/data/train/underSampling/mockMirna_darnell_human_ViennaDuplex_negative_features_train_underSampling_method.csv")
+    # df = read_csv(file_train_darnell)
+
+
+
+# distrubution()
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+#
+# # file_test_clip = pd.read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/clip_interaction/clip_interaction_clip_3_negative_features.csv")
+# # file_train_tarBase = pd.read_csv("/sise/home/efrco/efrco-master/data/negative_interactions/tarBase/tarBase_microArray_human_negative_features.csv")
+#
+# file_train_tarBase = read_csv("/sise/home/efrco/efrco-master/data/train/underSampling/0/tarBase_microArray_human_negative_features_train_underSampling_method_0.csv")
+# file_test_clip= read_csv("/sise/home/efrco/efrco-master/data/train/underSampling/0/clip_interaction_clip_3_negative_features_train_underSampling_method_0.csv")
+#
+#
+# file_train_tarBase = file_train_tarBase[file_train_tarBase['Label']==0]
+# file_test_clip = file_test_clip[file_test_clip['Label']==0]
+#
+# file_train_tarBase['Label']= "tarBase"
+# file_test_clip['Label']= "clip"
+#
+# # Reset index and columns of each DataFrame
+# file_train_tarBase = file_train_tarBase.reset_index(drop=True)
+# file_test_clip = file_test_clip.reset_index(drop=True)
+#
+# # Concatenate the DataFrames
+# df = pd.concat([file_test_clip, file_train_tarBase]).reset_index(drop=True)
+#
+# sns.set_theme(style="whitegrid")
+# f, ax = plt.subplots(figsize=(9, 9))
+# sns.despine(f)
+#
+# sns.histplot(
+#     data=df,
+#     x="Energy_MEF_Duplex",
+#     hue="Label"
+#
+# )
+#
+# plt.show()

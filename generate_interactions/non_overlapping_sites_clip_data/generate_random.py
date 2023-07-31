@@ -165,6 +165,7 @@ def worker(df_mrna, df_sites, df_mirna):
         dict_windows = dict()
         global_count = 0
         for window in range(0, len(cut_mrna) + size_param, size_param):
+
             sub_mrna = cut_mrna[window:window+75]
             start_site = window
             end_site = window+75
@@ -186,6 +187,7 @@ def worker(df_mrna, df_sites, df_mirna):
                 current_row['end'] = end_site
                 current_row['site'] = full_sub
                 dict_windows[global_count] = current_row
+                global_count = global_count + 1
 
 
         if len(dict_windows) == 0:
@@ -540,3 +542,7 @@ def full_pipline_run():
 # d0 = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/darnell_human_ViennaDuplex_features_negative.csv")
 # d = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/random_darnell_human_ViennaDuplex_features_negative.csv")
 # print("f")
+# d= read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_merge/darnell_human_ViennaDuplex_features.csv")
+# d["len"] = d['sequence'].apply(lambda r:len(r))
+# print("f")
+full_pipline_run()

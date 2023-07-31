@@ -188,8 +188,8 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
 
 
 def build_classifiers(number_iteration):
-    yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params_small.yml"
-    # yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params.yml"
+    # yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params_small.yml"
+    yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params.yml"
 
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
     number_iteration = str(number_iteration)

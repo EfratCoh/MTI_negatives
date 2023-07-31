@@ -3,6 +3,7 @@ import numpy as np
 from collections import Counter
 from sklearn.datasets import make_classification
 from imblearn.under_sampling import RandomUnderSampler
+from imblearn.over_sampling import RandomOverSampler
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import mutual_info_classif
@@ -38,8 +39,12 @@ def imbalanced_partation(pos, pos_train, pos_test, input_file_negative, output_d
     y = merge.Label.ravel()
     X = merge.drop(columns=['Label'], axis=1)
     print(Counter(y))
+
     # define undersample strategy
-    undersample = RandomUnderSampler(sampling_strategy='majority', random_state=random_state)
+    if neg.shape[0] >= pos.shape[0]:
+       undersample = RandomUnderSampler(sampling_strategy='majority', random_state=random_state)
+    else:
+        undersample = RandomOverSampler(sampling_strategy='minority', random_state=random_state)
 
     # fit and apply the transform
     X_over, y_over = undersample.fit_resample(X, y)
@@ -100,15 +105,15 @@ def split_train_test(dataset_positive_name, random_state, number_split):
 def test_size():
 
     print("###############TEST###################")
-    dir = DATA_PATH_INTERACTIONS / "test/underSampling"
+    dir = DATA_PATH_INTERACTIONS / "test/underSampling/0"
     result = pd.DataFrame()
     for dataset_file in dir.glob("*test*"):
         dataset = str(dataset_file.stem).split("_test")[0]
         print('#####################################################################')
         print(dataset)
         for suffix in ["test_underSampling_method"]:
-            dir = DATA_PATH_INTERACTIONS / "test/underSampling"
-            d = read_csv(dir / f"{dataset}_{suffix}.csv")
+            dir = DATA_PATH_INTERACTIONS / "test/underSampling/0"
+            d = read_csv(dir / f"{dataset}_{suffix}_0.csv")
             suffix = suffix.replace("test_", "")
             result.loc[dataset, suffix] = int(d.shape[0])
             print(Counter(d['Label']))
@@ -122,15 +127,15 @@ def test_size():
 def train_size():
 
     print("###############Train###################")
-    dir = DATA_PATH_INTERACTIONS / "train/underSampling"
+    dir = DATA_PATH_INTERACTIONS / "train/underSampling/0"
     result = pd.DataFrame()
     for dataset_file in dir.glob("*train*"):
         dataset = str(dataset_file.stem).split("_train")[0]
         print('#####################################################################')
         print(dataset)
         for suffix in ["train_underSampling_method"]:
-            dir = DATA_PATH_INTERACTIONS / "train/underSampling"
-        d = read_csv(dir / f"{dataset}_{suffix}.csv")
+            dir = DATA_PATH_INTERACTIONS / "train/underSampling/0"
+        d = read_csv(dir / f"{dataset}_{suffix}_0.csv")
         suffix = suffix.replace("train_", "")
         result.loc[dataset, suffix] = int(d.shape[0])
         print(Counter(d['Label']))

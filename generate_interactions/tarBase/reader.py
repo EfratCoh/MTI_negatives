@@ -9,7 +9,7 @@ from consts.mirna_utils import MIRBASE_FILE
 from utils import to_csv
 from utils.logger import logger
 from utils.utilsfile import get_subsequence_by_coordinates, get_wrapper, to_csv
-
+import numpy as np
 
 # necessary_columns = set(['GI_ID', 'microRNA_name', 'miRNA sequence', 'target sequence', 'number of reads'])
 
@@ -79,6 +79,18 @@ def filter_clash_interaction(df: DataFrame):
     print("################number of rows after filter clash interactions:##########", df.shape[0])
 
     return df
+
+def drop_duplicate(data):
+
+    rows = []
+    group_by_duplex = data.groupby(['full_mrna', 'miRNA ID'])# create an empty DataFrame to store the randomly selected rows
+    selected_rows = pd.DataFrame()
+
+    # loop over each group and select a random row from each group
+    for name, group in group_by_duplex:
+        selected_rows = selected_rows.append(group.iloc[np.random.randint(0, len(group))])
+
+    return selected_rows
 
 
 def mrna_sequences(df: DataFrame):
@@ -157,14 +169,18 @@ def run(out_filename):
     df[seq_cols] = df[seq_cols].replace(to_replace='T', value='U', regex=True)
 
     # df = df.reindex(columns=column_names)
+    df = drop_duplicate(df)
 
     # step-4
     print("final interactions in tarBase reade:", df.shape[0])
     save(df, out_filename)
 
 
-if __name__ == '__main__':
-    run("generate_interactions/tarBase/tarBase_human_negative.csv")
-    path = ROOT_PATH / "generate_interactions/tarBase/tarBase_human_negative.csv"
-    df = pd.read_csv(Path(path))
-    print(df)
+# if __name__ == '__main__':
+#     run("generate_interactions/tarBase/tarBase_human_negative.csv")
+#     path = ROOT_PATH / "generate_interactions/tarBase/tarBase_human_negative.csv"
+#     df = pd.read_csv(Path(path))
+#     print(df)
+
+
+

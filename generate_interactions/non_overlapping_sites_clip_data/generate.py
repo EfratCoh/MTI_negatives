@@ -150,12 +150,12 @@ def worker(df_mrna, df_sites, df_mirna):
         # all the sites from the clash + CLIP
         df_sites_gene_id = df_sites[df_sites['Gene_ID'] == Gene_ID]
 
-        # masking clip interactions
+        # masking clip interactions - we mask fragment (because we haven't known interaction)
         # mask the original site of the interaction by the clip data
         for row_index, row in sub_group.iterrows():
             mrna_cut = sub_insert_NNN(mrna_cut, row["start"], row["end"], row['site_old'])
 
-        # masking clash interactions
+        # masking clash interactions- we mask sites
         for row_index, row in df_sites_gene_id.iterrows():
             mrna_cut = sub_insert_NNN(mrna_cut, row["start"], row["end"], row['site_old'])
 

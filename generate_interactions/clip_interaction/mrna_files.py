@@ -113,6 +113,7 @@ def filter_interaction(df):
 def drop_duplicate(result):
     # Gene_ID ---> number Gen
     # ID ---> number Gen + number Transcript
+    # filter fragment from same ID
 
     print("size before filter grop mrna:", result.shape)
     df_g = result.groupby(['ID', 'site_new'])

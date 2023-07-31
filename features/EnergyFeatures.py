@@ -8,7 +8,6 @@ from duplex.Duplex import Duplex
 from features.Features import Features
 from utils.utilsfile import get_subsequence_by_coordinates
 
-
 import os
 os.environ['PATH'] = '/home/efrco/.conda/envs/my_env/bin:/storage/modules/packages/anaconda3/bin:/storage/modules/bin:/storage/modules/packages/anaconda3/condabin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/storage/modules/packages/matlab/R2019B/bin:/home/efrco/.local/bin:/home/efrco/bin'
 

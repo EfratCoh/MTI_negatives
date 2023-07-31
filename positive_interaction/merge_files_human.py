@@ -132,6 +132,8 @@ def filter(result) -> DataFrame:
 
     df.reset_index(drop=True, inplace=True)
     df.reset_index(inplace=True)
+    df["len"] = df['sequence'].apply(lambda r: len(r))
+    print("f")
     return df
 
 

@@ -64,9 +64,9 @@ class ClassifierWithGridSearch(object):
 
 
     # this function response on train model and then save this model
-    def train_one_conf(self, clf_name, conf, scoring="accuracy"):
+    def train_one_conf(self, clf_name, conf,number_iteration, scoring="accuracy"):
 
-        output_file = self.result_dir / f"{self.dataset_name}_{clf_name}.csv"
+        output_file = self.result_dir / f"{self.dataset_name}_method_{number_iteration}_{clf_name}.csv"
 
         # creat the specific clf and load the parameters of the clf according to the ymal file.
         clf = self.clf_dict[clf_name]
@@ -83,7 +83,7 @@ class ClassifierWithGridSearch(object):
         # save the best classifier
         best_clf = grid_obj.best_estimator_
 
-        model_file = self.result_dir / f"{self.dataset_name}_{clf_name}.model"
+        model_file = self.result_dir / f"{self.dataset_name}_method_{number_iteration}_{clf_name}.model"
 
         try:
             with model_file.open("wb") as pfile:
@@ -95,19 +95,19 @@ class ClassifierWithGridSearch(object):
 
 
 
-    def fit(self, yaml_path):
+    def fit(self, yaml_path, number_iteration):
         with open(yaml_path, 'r') as stream:
             training_config = yaml.safe_load(stream)
 
         for clf_name, conf in training_config.items():
             key_classifier = (list(self.clf_dict.keys())[0])
             if conf["run"] and clf_name == key_classifier:
-                self.train_one_conf(clf_name, conf, scoring="accuracy")
+                self.train_one_conf(clf_name, conf,number_iteration, scoring="accuracy")
 
 
-def worker(dataset_file, results_dir, yaml_file):
+def worker(dataset_file, results_dir, yaml_file,number_iteration):
     clf_grid_search = ClassifierWithGridSearch(dataset_file=dataset_file, result_dir=results_dir)
-    clf_grid_search.fit(yaml_file)
+    clf_grid_search.fit(yaml_file, number_iteration)
     return
 
 
@@ -122,7 +122,7 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
         results_dir = ROOT_PATH / "Results/models" / dir_method / number_iteration
         logger.info(f"results_dir = {results_dir}")
         logger.info(f"start dataset = {f}")
-        worker(f, results_dir=results_dir, yaml_file=yaml_file)
+        worker(f, results_dir=results_dir, yaml_file=yaml_file,number_iteration=number_iteration)
         logger.info(f"finish dataset = {f}")
     logger.info("finish self_fit")
 
@@ -134,6 +134,6 @@ def build_classifiers_svm(number_iteration):
     self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="one_class_svm", dir_method="models_one_class_svm",number_iteration=number_iteration)
     print("END main_primary")
 
-# build_classifiers()
+# build_classifiers_svm(number_iteration = 0)
 
 

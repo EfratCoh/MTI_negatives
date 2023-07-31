@@ -163,5 +163,4 @@ def genetate_interactions_from_files():
             path_df = GENERATE_DATA_PATH / name_dir / name_file
             to_csv(interactions_df, path_df)
 
-genetate_interactions_from_files()
-
+# genetate_interactions_from_files()

@@ -1,4 +1,4 @@
-import ast
+
 import shap
 import pickle
 import os
@@ -232,7 +232,12 @@ def model_shap_plot(test, model, model_name,s_org,d_org,name_classifiers, depend
     plt.show()
     plt.clf()
 
-
+import os
+import pandas as pd
+import numpy as np
+import xgboost as xgb
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 
 def different_results_summary(method_split: str, model_dir: str, number_iteration: int, name_classifier: str):
 
@@ -240,160 +245,116 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
     results_dir = ROOT_PATH / Path("Results")
     number_iteration = str(number_iteration)
     results_dir_models = ROOT_PATH / Path("Results/models") / model_dir / number_iteration
-    test_dir = DATA_PATH_INTERACTIONS / "test" / method_split / number_iteration
+    train_dir = DATA_PATH_INTERACTIONS / "train" / method_split / number_iteration
     res_table: DataFrame = pd.DataFrame()
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
     feature_reader = get_reader()
+    chossing_methods = [
+        "mockMiRNA", "mockMRNA_di_mockMiRNA",
+        "mockMRNA_di_site", "mockMRNA_di_mRNA",
+        "non_overlapping_sites", "non_overlapping_sites_random",
+        'tarBase_microArray',
+        "clip_interaction_clip_3_",
+        "non_overlapping_sites_clip_data_random"]
 
-    clf_datasets = [f.stem.split("_"+ name_classifier)[0] for f in results_dir_models.glob("*.model")]
+    for i in range(len(chossing_methods)):
+        name = chossing_methods[i]
+        chossing_methods[i] = clean_name(name.capitalize())
+
+
+    all_data = []
+    for f_train in train_dir.glob("*train*"):
+        f_stem = f_train.stem
+        train_dataset = f_stem.split(".csv")[0]
+        if clean_name(train_dataset) not in chossing_methods:
+            print(clean_name(train_dataset))
+            continue
+        # print(clean_name(train_dataset))
+        X, y = feature_reader.file_reader(train_dir/f"{train_dataset}.csv")
+        y = pd.DataFrame(y, columns=['Label'])
+        df = pd.concat([X, y], axis=1)
+        df_neg = df[df['Label'] == 0 ]
+        sampled_data = df_neg.sample(n=443, random_state=42)
+        all_data.append(sampled_data)
+
+    pos_data = df[df['Label'] == 1]
+    all_data.append(pos_data)
+    all_data = pd.concat(all_data, ignore_index=True)
+
+    X_train = all_data.drop('Label', axis=1)  # Replace 'target_column_name' with your target column name
+    y_train = all_data['Label']  # Replace 'target_column_name' with your target column name
+
+    test_dir = DATA_PATH_INTERACTIONS / "test" / method_split / number_iteration
+    FeatureReader.reader_selection_parameter = "without_hot_encoding"
+    feature_reader = get_reader()
+
     method = name_classifier
-    for clf_dataset in clf_datasets:
-        for f_test in test_dir.glob("*test*"):
-            f_stem = f_test.stem
-            test_dataset = f_stem.split(".csv")[0]
-            print(f"clf: {clf_dataset} test: {test_dataset}, method: {method}")
-            try:
-                    clf = get_presaved_clf(results_dir_models, clf_dataset, method)
-                    X_test, y_test = feature_reader.file_reader(test_dir/f"{test_dataset}.csv")
+    all_data = []
+    for f_test in test_dir.glob("*train*"):
+        f_stem = f_test.stem
+        test_datasets = f_stem.split(".csv")[0]
+        if clean_name(test_datasets) not in chossing_methods:
+            continue
+        X, y = feature_reader.file_reader(test_dir / f"{test_datasets}.csv")
+        y = pd.DataFrame(y, columns=['Label'])
+        df = pd.concat([X, y], axis=1)
+        df_neg = df[df['Label'] == 0]
+        sampled_data = df_neg.sample(n=175, random_state=42)
+        all_data.append(sampled_data)
 
-                    # score predict
-                    test_score = accuracy_score(y_test, clf.predict(X_test))
-                    res_table.loc[clf_dataset, test_dataset] = round(test_score, 3)
+    pos_data = df[df['Label'] == 1]
+    all_data.append(pos_data)
+    all_data = pd.concat(all_data, ignore_index=True)
 
-                    # save measures
-                    if name_classifier == 'svm' or name_classifier == 'isolation_forest':
-
-
-                        # Get the scores for the testing dataset
-                        # score = clf.score_samples(X_test)
-                        # # Check the score for 2% of outliers
-                        # score_threshold = np.percentile(score, 2)
-                        # print(f'The customized score threshold for 2% of outliers is {score_threshold:.2f}')
-                        # # Check the model performance at 2% threshold
-                        # # prediction_1 = [0 if i < score_threshold else 1 for i in score]
-                        # # # # Check the prediction performance
-                        # # prediction_2 = [0 if i == -1 else 1 for i in clf.predict(X_test)]
-                        # # prediction_1 = [0 if i < score_threshold else 1 for i in score]
-                        #
-                        prediction = clf.predict(X_test)
-                        print("prediction_2:", Counter(clf.predict(X_test)))
-                        prediction[prediction == -1] = 0  # negative class
-                        prediction[prediction == 1] = 1  # positive class
-                        #
-                        # print("true:", Counter(y_test))
-                        #
-                        # print('__________________________Results__________________________')
-                        # # print('tn fp fn tp')
-                        # # print("__________________________option 1__threshold________________________")
-                        # # print(confusion_matrix(y_test, prediction_1).ravel())
-                        # # print("__________________________option 2___________________________")
-                        # # print(confusion_matrix(y_test, prediction_2).ravel())
-                        # score = f1_score(y_test, prediction)
-                        # print('F1 Score: %.3f' % score)
-                        # precision = precision_score(y_test, prediction, average='binary')
-                        # print('Precision: %.3f' % precision)
-                        # recall = recall_score(y_test, prediction, average='binary')
-                        # print('Recall: %.3f' % recall)
-                        # # model_confuse_matrix(X_test,y_test, clf, method, clf_dataset, test_dataset,name_classifier)
-
-                    else:
-
-                        prediction = clf.predict(X_test)
-                        # shap graph
-                        if "microarray" not in conver_name(clean_name(clf_dataset)):
-                            continue
-                        model_shap_plot(X_test, clf, method, clf_dataset, test_dataset,name_classifier, dependence_feature=None)
-                        # features importance graph
-                        plot_feature_importances(clf, X_test, clf_dataset, test_dataset, name_classifier)
-                        # model_confuse_matrix(X_test, y_test, clf, method, clf_dataset, test_dataset,name_classifier)
-
-                    if name_classifier == 'isolation_forest':
-                        # features shap graph
-                        model_shap_plot(X_test, clf, method, clf_dataset, test_dataset,name_classifier, dependence_feature=None)
-
-                   #### ROC Curve ####
-                    # y_score = clf.score_samples(X_test)
-                    #
-                    # from sklearn.metrics import roc_curve
-                    # fpr, tpr, thresholds = roc_curve(y_test, y_score)
-                    # import matplotlib.pyplot as plt
-                    # plt.plot(fpr, tpr, 'k-', lw=2)
-                    # plt.xlabel('FPR')
-                    # plt.ylabel('TPR')
-                    # plt.show()
-                    ###################################################################
-
-                    # precision recall curve
+    X_test = all_data.drop('Label', axis=1)  # Replace 'target_column_name' with your target column name
+    y_test = all_data['Label']  # Replace 'target_column_name' with your target column name
+    print("SIZE TRAIN:", X_train.shape)
+    print("SIZE Test:", X_test.shape)
 
 
-                    # predict probabilities
-                    # lr_probs = clf.decision_function(X_test)
-                    # # keep probabilities for the positive outcome only
-                    # lr_probs = lr_probs[:, 1]
-                    # # predict class values
-                    # yhat = clf.predict(X_test)
-                    # lr_precision, lr_recall, _ = precision_recall_curve(y_test, lr_probs)
-                    # lr_f1, lr_auc = f1_score(y_test, yhat), auc(lr_recall, lr_precision)
-                    # # summarize scores
-                    # print('Logistic: f1=%.3f auc=%.3f' % (lr_f1, lr_auc))
-                    # # plot the precision-recall curves
-                    # no_skill = len(y_test[y_test == 1]) / len(y_test)
-                    # pyplot.plot([0, 1], [no_skill, no_skill], linestyle='--', label='No Skill')
-                    # pyplot.plot(lr_recall, lr_precision, marker='.', label='Logistic')
-                    # # axis labels
-                    # pyplot.xlabel('Recall')
-                    # pyplot.ylabel('Precision')
-                    # # show the legend
-                    # pyplot.legend()
-                    # # show the plot
-                    # pyplot.show()
+    # Convert the data to DMatrix format for XGBoost
+    dtrain = xgb.DMatrix(X_train, label=y_train)
+    dtest = xgb.DMatrix(X_test, label=y_test)
+
+    # Set the hyperparameters for XGBoost
+    params = {
+        'objective': ['binary:logistic'],  # Assuming binary classification, adjust accordingly
+        'eval_metric': ['logloss'],  # Adjust evaluation metric as needed
+        'max_depth': [3],
+        'learning_rate': [0.1],
+        'subsample': [0.6],
+        'colsample_bytree': [0.6],
+        'seed': [42],
+        'gamma':[0.5]
+    }
+
+    # Train the XGBoost model
+    num_rounds = 100  # Adjust the number of training rounds as needed
+    clf = XGBClassifier()
+
+    grid_obj = GridSearchCV(clf, params, scoring="accuracy", cv=5, n_jobs=-1, verbose=3)
+    grid_obj.fit(X_train, y_train)
+    # Make predictions on the test set
+    y_pred = grid_obj.predict(X_test)
+
+    test_score = accuracy_score(y_test,y_pred)
+    print("Test", test_score)
+    best_clf = grid_obj.best_estimator_
+    ms = measurement(y_test, y_pred)
+    print(ms)
+    shap_values = shap.TreeExplainer(best_clf).shap_values(X_test.values.astype('float'))
+    shap.summary_plot(shap_values, X_test, show=False, max_display=10,color_bar=True, feature_names=X_test.columns)
 
 
-                    ms = measurement(y_test, prediction)
-                    if name_classifier == 'svm' or name_classifier == 'isolation_forest':
-                        # # Predict scores for test set- is realte to positive calss
-                        y_scores = clf.decision_function(X_test)
+    fname = Path("/sise/home/efrco/efrco-master/figuers/") / "mix_method.png"
+    plt.gcf().axes[-1].set_aspect(100)
+    plt.gcf().axes[-1].set_box_aspect(100)
+    plt.gca().tick_params(axis="y", pad=250)
+    plt.yticks(ha='left')
+    plt.savefig(fname, bbox_inches='tight', dpi=300)
+    plt.show()
+    plt.clf()
 
-                        # # Calculate precision, recall and thresholds relate to negative
+different_results_summary(method_split="underSampling", model_dir="models_underSampling",
+                          number_iteration=0, name_classifier='xgbs')
 
-                        precision, recall, thresholds = precision_recall_curve(y_true=y_test,
-                                                                               probas_pred=y_scores, pos_label=0)
-                        # Calculate AUC for precision-recall-negative curve
-                        prn_auc = auc(recall, precision)
-                        print("PNR:", prn_auc)
-
-                        ms['PNR'] = round(prn_auc,3)
-
-                    if ms_table is None:
-                        ms_table = pd.DataFrame(columns=list(ms.keys()), dtype=object)
-                    name_method = "model:" + clf_dataset.split("negative")[0] + "/" + "test:" + test_dataset.split("negative")[0]
-                    ms_table.loc[name_method] = ms
-
-            except NoModelFound:
-                    pass
-
-    res_table.sort_index(axis=0, inplace=True)
-    res_table.sort_index(axis=1, inplace=True)
-
-    print(res_table)
-    # to_csv(res_table, results_dir / "summary" / "diff_summary_stratify.csv")
-    # print(name_classfier)
-    to_csv(ms_table, results_dir /"results_iterations" / name_classifier /f"measurement_summary_{number_iteration}.csv")
-    print("END result test")
-    return ms_table
-
-
-# different_results_summary(method_split="underSampling", model_dir="models_underSampling")
-
-# different_results_summary(method_split="one_class_svm", model_dir="models_one_class_svm")
-# different_results_summary(method_split="one_class_svm", model_dir="models_one_class_svm",
-#                                   number_iteration=0, name_classifier='svm')
-
-# different_results_summary(method_split="underSampling", model_dir="models_underSampling",
-#                           number_iteration=0, name_classifier='xgbs')
-
-
-# different_results_summary(method_split="one_class_svm", model_dir="models_isolation_forest",
-#                               number_iteration=0, name_classifier='isolation_forest')
-# different_results_summary(method_split="one_class_svm", model_dir="models_isolation_forest",
-#                           number_iteration=0, name_classifier='isolation_forest')

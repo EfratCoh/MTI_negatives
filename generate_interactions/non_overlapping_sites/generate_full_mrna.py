@@ -104,6 +104,7 @@ def worker(fin, fout_name, tmp_dir):
     neg_df = pd.DataFrame()
     for g in group:
         i += 1
+
         mirna_name = g[1]
         mrna_name = g[0]
         rows_group = in_df[(in_df['Gene_ID'] == mrna_name)]
@@ -130,15 +131,18 @@ def worker(fin, fout_name, tmp_dir):
         size_param = 40
         new_row = pd.Series()
         dict_windows = dict()
+        dict_energy= dict()
 
         for window in range(0, len(cut_mrna) + size_param, size_param):
             global_count += 1
             sub_mrna = cut_mrna[window:window+75]
             if "N" in sub_mrna:
+                global_count -=1
                 continue
 
             valid, properties = generate_negative_seq(row['miRNA sequence'], sub_mrna)
             if not valid:
+                global_count -=1
                 continue
 
             new_row = pd.Series()
@@ -149,6 +153,7 @@ def worker(fin, fout_name, tmp_dir):
             new_row['Gene_ID'] = row.Gene_ID
             new_row['full_mrna'] = row.sequence
             new_row['site'] = sub_mrna
+            dict_energy[global_count] = properties["MEF_duplex"]
             dict_windows[global_count] = new_row
 
         if len(dict_windows) == 0:
@@ -156,10 +161,36 @@ def worker(fin, fout_name, tmp_dir):
             print("not found interaction for",i ," dataset:", fout_name)
             continue
 
-        values = list(dict_windows.values())
+        sort_dict = dict(sorted(dict_energy.items(), key=lambda item: item[1]))
+        # top 25 keys index
+        slice = int(len(sort_dict)/5) + 1
+        # save the top 25 after sotr
+        values = list(sort_dict.keys())[:slice]
+        #chose one key
         random_value = random.choice(values)
-        neg_df = neg_df.append(random_value, ignore_index=True)
-        # if i > 1:
+
+        # values = list(dict_energy.values())
+        # #
+        # # # Sort the list of values
+        # sorted_values = sorted(values)
+        #
+        # # Calculate the median value
+        # n = len(sorted_values)
+        # if n % 2 == 0:
+        #     median_value = sorted_values[n // 2 - 1]
+        # else:
+        #     median_value = sorted_values[n // 2]
+        #
+        # # Iterate through the dictionary and find the key(s) that correspond to the median value
+        # median_keys = []
+        # for key, value in dict_energy.items():
+        #     if value == median_value:
+        #         median_keys.append(key)
+
+        # neg_df = neg_df.append(dict_windows[median_keys[0]], ignore_index=True)
+        neg_df = neg_df.append(dict_windows[random_value], ignore_index=True)
+
+        # if i > 4:
         #     break
 
     #######################
@@ -186,8 +217,8 @@ def main():
         if "darnell" not in p.stem:
             continue
         print(p)
-        fout_name = p.name.split('.csv')[0] + '_random.csv'
+        fout_name = "top_20_percent_" + p.name.split('.csv')[0] + '.csv'
         worker(p, fout_name, tmp_base)
         break
-
+#
 # main()

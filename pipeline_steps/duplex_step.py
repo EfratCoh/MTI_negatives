@@ -18,7 +18,6 @@ def do_duplex(mirna: str, target: str, cls: Duplex) -> Series:
         return Series({"duplex_valid" : False,
                        "not_match_site": "",
                            "site": "",
-                       "fragment": target,
                       "mrna_bulge": "",
                       "mrna_inter": "",
                       "mir_inter": "",
@@ -27,8 +26,7 @@ def do_duplex(mirna: str, target: str, cls: Duplex) -> Series:
     return Series({"duplex_valid": dp.valid,
                    "not_match_site": dp.site_non_match_tail,
                    "site": dp.site[::-1],
-                   "fragment": target,
-                  "mrna_bulge": dp.mrna_bulge,
+              "mrna_bulge": dp.mrna_bulge,
               "mrna_inter": dp.mrna_inter,
               "mir_inter": dp.mir_inter,
               "mir_bulge": dp.mir_bulge})
