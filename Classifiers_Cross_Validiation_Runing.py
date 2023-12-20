@@ -692,27 +692,8 @@ class CrossValidation(object):
 
         # self.split_train_test_files()
 
-        # self.run_experiment_xgbs(start=0, to=1) #for shap and feature importance #6649424
-        # self.run_experiment_xgbs(start=1, to=2) #
-        # self.run_experiment_xgbs(start=2, to=3) #
-        # self.run_experiment_xgbs(start=3, to=4) #
-        # self.run_experiment_xgbs(start=4, to=5) #
-        # self.run_experiment_xgbs(start=5, to=6) #
-        # self.run_experiment_xgbs(start=6, to=7) #
-        # self.run_experiment_xgbs(start=7, to=8) #
-        # self.run_experiment_xgbs(start=8, to=9) #
-        # self.run_experiment_xgbs(start=9, to=10) #
-        # self.run_experiment_xgbs(start=10, to=11) #6880553
-        # self.run_experiment_xgbs(start=11, to=12) #6881223
-        # self.run_experiment_xgbs(start=12, to=13) #6896909
-        # self.run_experiment_xgbs(start=13, to=14) #6896912
-        # self.run_experiment_xgbs(start=14, to=15) #6896915
-        # self.run_experiment_xgbs(start=15, to=16) #6896916
-        # self.run_experiment_xgbs(start=16, to=17) #6896923
-        # self.run_experiment_xgbs(start=17, to=18) #6896929
-        # self.run_experiment_xgbs(start=18, to=19) #6896934
-        # self.run_experiment_xgbs(start=19, to=20) #6896936
-        # pass
+        # self.run_experiment_xgbs(start=0, to=20) #for shap and feature importance #6649424
+     
 
         ###########################One class classification########################################
         # self.run_experiment_one_class_svm()
@@ -724,8 +705,8 @@ class CrossValidation(object):
 
 
         ################################Write Results####################################################################
-        # self.write_results() #7843884
-        pass
+        # self.write_results() 
+        
 
 
 
