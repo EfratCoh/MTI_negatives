@@ -12,4 +12,13 @@ between datasets. In addition, we examined whether unsupervised one-class classi
 We demonstrate the importance of negative data in MTI classification, analyze specific methodological characteristics that differentiate negative datasets, and highlight the challenge of ML models generalizing interaction rules 
 from training to testing sets derived from different approaches.  This study provides valuable insights into the computational prediction of MTIs that can be further used to establish standards in the field.
 
-The code is 
+The code is divided into the following folders and files:
+1. First part Creating the negative interactions according to each of the methods The "generate interactions" folder was found. The folder contains the folders according to the method names.
+2. The pipline_steps folder contains the files for processing the negative interactions.
+3. The pipline_steps_negative folder contains the steps for processing the negative interactions.
+4. Fetuers folder - contains the files for creating properties for all types of interactions.
+5. Duplex folder - a folder that contains the files with which the duplex of the interaction is calculated during the interaction processing phase.
+6. The Classifier folder - contains the file ClassifierWithGridSearch.py which is responsible for creating a model including selecting parameters using grid search. A yaml folder in which the parameters for each of the tested models are found.
+7. full_pipline_positive- the full runtime file for positive interactions. including the initial processing for interactions and feature extraction.
+7. full_pipline_negative- the complete runtime file for negative interactions. including the creation of the interactions for each of the methods, the initial processing for interactions and feature extraction.
+8. Classifiers_Cross_Validation_Runing- contains the experiment itself. Running the models and creating them 20 times as well as extracting the results.
