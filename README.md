@@ -11,3 +11,5 @@ we analyzed unique features that distinguish
 between datasets. In addition, we examined whether unsupervised one-class classification models that utilize solely positive interactions for training are suitable for the task of MTIs classification. 
 We demonstrate the importance of negative data in MTI classification, analyze specific methodological characteristics that differentiate negative datasets, and highlight the challenge of ML models generalizing interaction rules 
 from training to testing sets derived from different approaches.  This study provides valuable insights into the computational prediction of MTIs that can be further used to establish standards in the field.
+
+The code is 
