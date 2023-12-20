@@ -41,10 +41,8 @@ def imbalanced_partation(pos, pos_train, pos_test, input_file_negative, output_d
     print(Counter(y))
 
     # define undersample strategy
-    if neg.shape[0] >= pos.shape[0]:
-       undersample = RandomUnderSampler(sampling_strategy='majority', random_state=random_state)
-    else:
-        undersample = RandomOverSampler(sampling_strategy='minority', random_state=random_state)
+    undersample = RandomUnderSampler(sampling_strategy='majority', random_state=random_state)
+    
 
     # fit and apply the transform
     X_over, y_over = undersample.fit_resample(X, y)
