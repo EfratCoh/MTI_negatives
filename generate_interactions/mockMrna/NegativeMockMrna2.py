@@ -82,24 +82,7 @@ class MockMRNA(object):
         mrna_mock = ''.join(seq_str)
         return mrna_mock
 
-    # def generate_mrna_mock_nucleotides(self, mrna, th=5):
-    #
-    #     seq = list(mrna.replace('T', 'U').upper())
-    #     seq_original = list(mrna.replace('T', 'U').upper())
-    #
-    #     num_shuffle = 0
-    #     equal_to_itself = True
-    #     while equal_to_itself:
-    #         random.shuffle(seq)
-    #         num_shuffle += 1
-    #         if num_shuffle % 10000 == 0:
-    #             print(num_shuffle)
-    #         if num_shuffle > 100000:
-    #             break
-    #         equal_to_itself = seq_original == seq
-    #
-    #     mrna_mock = ''.join(seq)
-    #     return mrna_mock
+   
     def valid_negative_seq(self, mir, mrna):
 
         duplex_cls: Duplex = DUPLEX_DICT['ViennaDuplex']
@@ -194,15 +177,12 @@ def worker(organism, fin, fout_name, tmp_dir,name_shuffle):
         new_row["site"] = properties["site"]
 
         neg_df = neg_df.append(new_row, ignore_index=True)
-        # if i > 10:
-        #     break
-
+      
 
     ########################
     # Save df to CSV
     ########################
     neg_df.reset_index(drop=True, inplace=True)
-    #neg_df.drop(labels=['Seed_match_noncanonical', 'Seed_match_canonical'], axis=1, inplace=True)
     drop_unnamed_col(neg_df)
     neg_df["key"] = neg_df.reset_index().index
     fout = tmp_dir / fout
