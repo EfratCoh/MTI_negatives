@@ -464,8 +464,7 @@ def main_run_clash():
 
 # to append more interactions
 def find_gene_apper_more_than_one_time():
-        clash_darnell = read_csv(
-            "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+        clash_darnell = POSTIVE_INTERACTIONS
 
         result = clash_darnell['Gene_ID'].value_counts()
         result = result[result > 2].index.tolist()
