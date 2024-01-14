@@ -226,7 +226,6 @@ def worker(organism, fin, fout_name, tmp_dir, name_shuffle):
     # Save df to CSV
     ########################
     neg_df.reset_index(drop=True, inplace=True)
-    #neg_df.drop(labels=['Seed_match_noncanonical', 'Seed_match_canonical'], axis=1, inplace=True)
     drop_unnamed_col(neg_df)
     neg_df["key"] = neg_df.reset_index().index
     fout = tmp_dir / fout
@@ -245,5 +244,4 @@ def main(name_shuffle):
             worker('hsa', p, fout_name, tmp_base, name_shuffle)
 
 
-# main()
 
