@@ -28,13 +28,6 @@ class CrossValidation(object):
         self.dataset_file_positive = dataset_file_positive
         self.result_dir = ROOT_PATH / Path("Results") / result_dir
         self.result_dir.mkdir(exist_ok=True, parents=True)
-        # self.measurement_dict_xgboost = self.screate_measurement_dict()
-        # self.measurement_dict_svm = self.create_measurement_dict()
-        # self.measurement_dict ={'svm': self.create_measurement_dict(),
-        #                         'xgbs': self.create_measurement_dict(),
-        #                         'isolation_forest': self.create_measurement_dict(),
-        #                         'binary_comper_SVM': self.create_measurement_dict(),
-        #                         'binary_comper_rf': self.create_measurement_dict()}
         self.measurement_dict = {
                                  'xgbs': self.create_measurement_dict()}
 
@@ -59,32 +52,7 @@ class CrossValidation(object):
     def get_measurement_dict(self, name_dict):
         return {k: round(v, 3) for k, v in self.measurement_dict[name_dict].items()}
 
-
-    def clean_directory(self):
-        train = "/sise/home/efrco/efrco-master/data/train"
-        test = "/sise/home/efrco/efrco-master/data/test"
-        figuers = "/sise/home/efrco/efrco-master/Results/figuers/"
-        results_iterations = "/sise/home/efrco/efrco-master/Results/results_iterations/"
-        models_clean = "/sise/home/efrco/efrco-master/Results/results_iterations/"
-        measurment_cross = "/sise/home/efrco/efrco-master/Results/measurments_cross_validation/"
-        measurment_cross = "/sise/home/efrco/efrco-master/Results/models/"
-
-
-        paths = [train, test, figuers, results_iterations, models_clean, measurment_cross]
-
-        for p in paths:
-            for dirpath, dirnames, filenames in os.walk(p):
-                for filename in filenames:
-                    file_path = os.path.join(dirpath, filename)
-                    try:
-                        os.remove(file_path)
-                    except OSError:
-                        print("Error while deleting file: ", file_path)
-
-
-
     def split_train_test_files(self):
-        # self.clean_directory()
         for i in range(self.number_iterations):
             # split_train_test_underSampling(dataset_positive_name=self.dataset_file_positive, random_state=i * 19, number_split=i)
             split_train_test_one_class(method_split_source='underSampling', random_state=i * 19,  number_split=i)
@@ -96,15 +64,15 @@ class CrossValidation(object):
 
     def run_one_class_svm(self, number_iteration):
         build_classifiers_svm(number_iteration)
-        # different_results_summary(method_split="one_class_svm", model_dir="models_one_class_svm",
-        #                           number_iteration=number_iteration, name_classifier='svm')
+        different_results_summary(method_split="one_class_svm", model_dir="models_one_class_svm",
+                                   number_iteration=number_iteration, name_classifier='svm')
         different_results_summary(method_split="underSampling", model_dir="models_one_class_svm",
                                   number_iteration=number_iteration, name_classifier='svm')
 
     def run_isolation_forest(self, number_iteration):
         build_classifiers_isolation_forest(number_iteration)
-        # different_results_summary(method_split="one_class_svm", model_dir="models_isolation_forest",
-        #                           number_iteration=number_iteration, name_classifier='isolation_forest')
+        different_results_summary(method_split="one_class_svm", model_dir="models_isolation_forest",
+                                   number_iteration=number_iteration, name_classifier='isolation_forest')
         different_results_summary(method_split="underSampling", model_dir="models_isolation_forest",
                                   number_iteration=number_iteration, name_classifier='isolation_forest')
 
@@ -129,7 +97,7 @@ class CrossValidation(object):
                         col = ms_table[measurement].apply(lambda t: round(t, 3))
                         self.measurement_dict[classifier][measurement][f"exper_{number_iteration}"] = col
                     except:
-                        print("PPPPPPPPPPPPPP")
+                        print("BUG")
     def write_results(self):
         self.summary_results_do_dict()
         # save file of result for each measuerment
@@ -228,438 +196,7 @@ class CrossValidation(object):
         name_clean = name_clean.capitalize()
 
         return name_clean
-
-    def summary_matrix(self, measurement_name):
-        res_table = pd.DataFrame()
-        for classifier in self.measurement_dict.keys():
-            res_table = pd.DataFrame()
-            out_dir_mean = self.result_dir/classifier / "final_mean.csv"
-            df_mean = read_csv(out_dir_mean)
-            for (columnName, columnData) in df_mean.iteritems():
-                train_name = self.clean_name(columnName.split('/')[0])
-                test_name = self.clean_name(columnName.split('/')[1])
-                if 'mono' in train_name or 'mono' in test_name:
-                    continue
-                train_name = self.conver_name(train_name)
-                test_name = self.conver_name(test_name)
-
-                res_table.loc[test_name, train_name] = df_mean.loc[measurement_name, columnName]
-            ax = sns.heatmap(res_table, annot=True)
-            sns.color_palette("Spectral", as_cmap=True)
-            ax.set(xlabel="train", ylabel="test")
-            plt.xticks(rotation=30, ha='right')
-
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap/") / "heatmap.png"
-            plt.savefig(fname, format="PNG", bbox_inches='tight', dpi=300)
-            plt.clf()
-
-
-    def summary_barplot_inra_results(self, measurement_name):
-        keys = ['method', 'measurement', 'value']
-        # res_table = pd.DataFrame(columns=list(keys), dtype=object)
-        dtypes = np.dtype(
-            [
-                ("method", str),
-                ("measurement", str),
-                ("value", float),
-
-            ]
-        )
-        res_table = pd.DataFrame(np.empty(0, dtype=dtypes))
-
-        for classifier in self.measurement_dict.keys():
-
-            out_dir_mean = self.result_dir / classifier / "final_mean.csv"
-            df_mean = read_csv(out_dir_mean)
-            for (columnName, columnData) in df_mean.iteritems():
-                train_name = self.clean_name(columnName.split('/')[0])
-                test_name = self.clean_name(columnName.split('/')[1])
-                if 'mono' in train_name or 'mono' in test_name:
-                    continue
-                if train_name != test_name:
-                    continue
-                train_name = self.conver_name(train_name)
-                test_name = self.conver_name(test_name)
-                res_table.loc['method'] = train_name
-                res_table.loc['measurement'] = measurement_name
-                res_table.loc['value'] = df_mean.loc[measurement_name, columnName]
-
-
-            ax = sns.barplot(data=res_table, x="measurement_name", y="value", hue="method")
-
-            sns.color_palette("Spectral", as_cmap=True)
-
-
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap/") / "heatmap.png"
-            plt.savefig(fname, format="PNG", bbox_inches='tight', dpi=300)
-            plt.clf()
-
-    def summary_matrix_mock_mrna(self, measurement_name, target_calculate):
-        res_table = pd.DataFrame()
-        for classifier in self.measurement_dict.keys():
-            res_table = pd.DataFrame()
-            out_dir_mean = self.result_dir/classifier / "final_mean.csv"
-            out_dir_std = self.result_dir / classifier / "final_std.csv"
-
-            if target_calculate == "mean":
-                df_mean = read_csv(out_dir_mean)
-            else:
-                df_mean = read_csv(out_dir_std)
-
-            for (columnName, columnData) in df_mean.iteritems():
-                train_name = self.clean_name(columnName.split('/')[0])
-                test_name = self.clean_name(columnName.split('/')[1])
-                if 'mockMrna' not in train_name or 'mockMrna' not in test_name:
-                    continue
-                train_name = self.conver_name(train_name)
-                test_name = self.conver_name(test_name)
-                res_table.loc[test_name, train_name] = df_mean.loc[measurement_name, columnName]
-            ax = sns.heatmap(res_table, annot=True)
-            sns.color_palette("rocket", as_cmap=True)
-            ax.set(xlabel="train", ylabel="test")
-
-            name_file = "heatmap_mockMrna" + str(measurement_name) + "_" + str(target_calculate) + ".png"
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap/mockMrna") / name_file
-            plt.savefig(fname, format="PNG", bbox_inches='tight',  dpi=300)
-            plt.clf()
-
-
-    def summary_matrix_tarBase(self, measurement_name, target_calculate="mean"):
-        res_table = pd.DataFrame()
-        for classifier in self.measurement_dict.keys():
-            res_table = pd.DataFrame()
-            out_dir_mean = self.result_dir / classifier / "final_mean.csv"
-            out_dir_std = self.result_dir / classifier / "final_std.csv"
-
-            if target_calculate == "mean":
-                df_mean = read_csv(out_dir_mean)
-            else:
-                df_mean = read_csv(out_dir_std)
-
-            for (columnName, columnData) in df_mean.iteritems():
-                train_name = self.clean_name(columnName.split('/')[0])
-                test_name = self.clean_name(columnName.split('/')[1])
-                if 'tarBase' not in train_name or 'tarBase' not in test_name:
-                    continue
-
-                res_table.loc[test_name, train_name] = df_mean.loc[measurement_name, columnName]
-
-            ax = sns.heatmap(res_table, annot=True)
-            sns.color_palette("rocket", as_cmap=True)
-            ax.set(xlabel="train", ylabel="test")
-
-            name_file = "heatmap_tarBase" + str(measurement_name) + "_" + str(target_calculate) + ".png"
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap/tarBase") / name_file
-            plt.savefig(fname, format="PNG", bbox_inches='tight', dpi=300)
-            plt.clf()
-
-    def summary_matrix_non_overlapping_site(self, measurement_name, target_calculate="mean"):
-        res_table = pd.DataFrame()
-        for classifier in self.measurement_dict.keys():
-            res_table = pd.DataFrame()
-            out_dir_mean = self.result_dir / classifier / "final_mean.csv"
-            out_dir_std = self.result_dir / classifier / "final_std.csv"
-
-            if target_calculate == "mean":
-                df_mean = read_csv(out_dir_mean)
-            else:
-                df_mean = read_csv(out_dir_std)
-
-            for (columnName, columnData) in df_mean.iteritems():
-                train_name = self.clean_name(columnName.split('/')[0])
-                test_name = self.clean_name(columnName.split('/')[1])
-                if 'non_overlapping_sites' not in train_name.lower() or 'non_overlapping_sites' not in test_name.lower():
-                    continue
-                if 'clip' in train_name.lower() or 'clip'  in test_name.lower():
-                    continue
-                train_name = self.conver_name(train_name)
-                test_name = self.conver_name(test_name)
-                res_table.loc[train_name, test_name] = df_mean.loc[measurement_name, columnName]
-
-            ax = sns.heatmap(res_table, annot=True)
-            sns.color_palette("rocket", as_cmap=True)
-            ax.set(xlabel="Test", ylabel="Train")
-            ax.tick_params(axis="y", pad=170)
-            plt.yticks(ha='left')
-
-            plt.xticks(rotation=30, ha='right')
-            name_file = "heatmap_non_overlapping_sites" + str(measurement_name) + "_" + str(target_calculate) + ".png"
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap/non_overlapping_sites") / name_file
-            plt.savefig(fname, format="PNG", bbox_inches='tight',  dpi=300)
-            plt.clf()
-
-    def summary_matrix_clip(self, measurement_name, target_calculate="mean"):
-        res_table = pd.DataFrame()
-        for classifier in self.measurement_dict.keys():
-            res_table = pd.DataFrame()
-            out_dir_mean = self.result_dir / classifier / "final_mean.csv"
-            out_dir_std = self.result_dir / classifier / "final_std.csv"
-
-            if target_calculate == "mean":
-                df_mean = read_csv(out_dir_mean)
-            else:
-                df_mean = read_csv(out_dir_std)
-
-            for (columnName, columnData) in df_mean.iteritems():
-                train_name = self.clean_name(columnName.split('/')[0])
-                test_name = self.clean_name(columnName.split('/')[1])
-                if 'clip_3' not in train_name or 'clip_3' not in test_name:
-                    continue
-
-                res_table.loc[test_name, train_name] = df_mean.loc[measurement_name, columnName]
-
-
-            ax = sns.heatmap(res_table, annot=True)
-            sns.color_palette("rocket", as_cmap=True)
-            ax.set(xlabel="Train", ylabel="Test")
-
-
-            name_file = "heatmap_clip" + str(measurement_name) + "_" + str(target_calculate) + ".png"
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap/clip") / name_file
-            plt.savefig(fname, format="PNG", bbox_inches='tight',  dpi=300)
-            plt.clf()
-
-
-    def summary_matrix_Intra(self):
-        res_table = pd.DataFrame()
-        measurement_name_list = ['ACC', 'TPR', 'TNR', 'F1']
-        final_method = ['tarBase','tarBase_Liver', 'tarBase_microArray',
-                        "non_overlapping_sites", "non_overlapping_sites_random",
-                        "mockMiRNA",
-                        "mockMRNA__di_mRNA", "mockMRNA__di_fragment","mockMRNA__di_fragment_mockMiRNA",
-                        "mockMRNA_mono_mRNA", "mockMRNA_mono_site", "mockMRNA__mono_fragment_mockMiRNA",
-                        "clip_interaction_clip_3_",
-                        "non_overlapping_sites_clip_data","non_overlapping_sites_clip_data_random"]
-        final_method = ["mockMiRNA",
-                        "mockMRNA__di_mRNA", "mockMRNA__di_fragment", "mockMRNA__di_fragment_mockMiRNA",
-                        "mockMRNA_mono_mRNA", "mockMRNA_mono_site", "mockMRNA__mono_fragment_mockMiRNA",
-                        'tarBase', 'tarBase_Liver', 'tarBase_microArray',
-                        "non_overlapping_sites", "non_overlapping_sites_random",
-                        "clip_interaction_clip_3_",
-                        "non_overlapping_sites_clip_data", "non_overlapping_sites_clip_data_random"]
-        chossing_methods = ['tarBase_microArray',
-                        "non_overlapping_sites", "non_overlapping_sites_random",
-                        "mockMiRNA",
-                        "mockMRNA_di_mRNA", "mockMRNA_di_fragment","mockMRNA_di_fragment_mockMiRNA",
-                        "clip_interaction_clip_3_",
-                        "non_overlapping_sites_clip_data_random"]
-        for i in range(len(final_method)):
-            name = final_method[i]
-            final_method[i] = name.capitalize()
-        for i in range(len(chossing_methods)):
-            name = chossing_methods[i]
-            chossing_methods[i] = name.capitalize()
-
-        for classifier in self.measurement_dict.keys():
-            res_table = pd.DataFrame()
-            out_dir_mean = self.result_dir / classifier / "final_mean.csv"
-
-            df_mean = read_csv(out_dir_mean)
-            for measurement_name in measurement_name_list:
-                for current_method in final_method:
-                    for (columnName, columnData) in df_mean.iteritems():
-                        train_name = self.clean_name(columnName.split('/')[0])
-                        test_name = self.clean_name(columnName.split('/')[1])
-                        if train_name != test_name:
-                            print(train_name)
-                            print(test_name)
-                            print("######################################################")
-                            continue
-                        if train_name not in final_method:
-                            # print(train_name)
-                            continue
-                        if train_name != current_method:
-                            continue
-                        train_name = train_name.replace("__","_")
-                        train_name = train_name.replace("mockMrna_de_mrna","mockMrna_di_mrna")
-                        train_name = train_name.replace("mockMrna_de_site","mockMrna_di_site")
-                        train_name = train_name.replace("mockMrna_de_mockMirna","mockMrna_di_mockMirna")
-
-                        if train_name in chossing_methods:
-                            train_name = self.conver_name(train_name)
-                            train_name = train_name + " *"
-                        else:
-                            if train_name=="Non_overlapping_sites_clip_data":
-                                print("v")
-                            train_name = self.conver_name(train_name)
-
-                        # res_table.loc[measurement_name, train_name] = df_mean.loc[measurement_name, columnName]
-                        res_table.loc[train_name, measurement_name] = df_mean.loc[measurement_name, columnName]
-
-            # ax = sns.heatmap(res_table, annot=True, linewidth=4.5,cmap=sns.cubehelix_palette(as_cmap=True))
-
-            ax = sns.heatmap(res_table, annot=True, linewidth=(3.5,0))
-            sns.color_palette("rocket", as_cmap=True)
-
-            ax.set(xlabel="Metric", ylabel="Dataset")
-
-            # plt.xticks(rotation=30, ha='right')
-            plt.xticks(ha='center')
-
-            ax.tick_params(axis="y", pad=215)
-            plt.yticks(ha='left')
-
-            name_file = "heatmap_Intra.png"
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap") / name_file
-            plt.savefig(fname, format="PNG", bbox_inches='tight',  dpi=300)
-            plt.show()
-            plt.clf()
-
-
-    def summary_matrix_cross(self, measurement_name):
-        res_table = pd.DataFrame()
-        dict_rename = {}
-
-        chossing_methods = [
-                            "mockMiRNA",
-                            "mockMRNA_di_fragment_mockMiRNA", "mockMRNA_di_mRNA", "mockMRNA_di_fragment",
-                            "non_overlapping_sites", "non_overlapping_sites_random",
-                             'tarBase_microArray',
-                            "clip_interaction_clip_3_",
-                            "non_overlapping_sites_clip_data_random"]
-        for i in range(len(chossing_methods)):
-            name = chossing_methods[i]
-            chossing_methods[i] = name.capitalize()
-            dict_rename[chossing_methods[i]] = "Method " + str(i)
-
-        for classifier in self.measurement_dict.keys():
-
-            res_table = pd.DataFrame()
-            out_dir_mean = self.result_dir / classifier / "final_std.csv"
-            df_mean = read_csv(out_dir_mean)
-            for method_test in chossing_methods:
-                for method_train in chossing_methods:
-                    for (columnName, columnData) in df_mean.iteritems():
-                        train_name = self.clean_name(columnName.split('/')[0])
-                        test_name = self.clean_name(columnName.split('/')[1])
-                        train_name = train_name.replace("__", "_")
-                        train_name = train_name.replace("mockMrna_di_mrna", "mockMrna_di_mrna")
-                        train_name = train_name.replace("mockMrna_di_site", "mockMRNA_di_fragment")
-                        train_name = train_name.replace("mockMrna_di_mockMirna", "mockMRNA_di_fragment_mockMiRNA")
-                        test_name = test_name.replace("__", "_")
-                        test_name = test_name.replace("mockMrna_de_mrna", "mockMrna_di_mrna")
-                        test_name = test_name.replace("mockMrna_de_site", "mockMRNA_di_fragment")
-                        test_name = test_name.replace("mockMrna_de_mockMirna", "mockMRNA_di_fragment_mockMiRNA")
-
-                        if 'mono' in train_name or 'mono' in test_name:
-                            continue
-                        if train_name not in chossing_methods or test_name not in chossing_methods:
-                            print(train_name)
-                            print(test_name)
-                            print("**********************************")
-                            continue
-                        if method_train!=train_name or method_test!=test_name:
-                            continue
-
-                        test_name = self.conver_name(test_name)
-                        train_name = self.conver_name(train_name)
-
-                        # res_table.loc[test_name, train_name] = df_mean.loc[measurement_name, columnName]
-                        res_table.loc[train_name, test_name] = df_mean.loc[measurement_name, columnName]
-
-            for i in range(len(chossing_methods)):
-                name = self.conver_name(chossing_methods[i])
-                chossing_methods[i] = name
-
-            res_table = res_table.reindex(columns=chossing_methods)
-
-            ax = sns.heatmap(res_table, annot=True, linewidth=(1.5,0))
-            # ax = sns.heatmap(res_table, annot=True)
-
-            sns.color_palette("Spectral", as_cmap=True)
-            ax.set(xlabel="Testing dataset", ylabel="Training dataset")
-            plt.xticks(rotation=30, ha='right')
-            ax.tick_params(axis="y", pad=215)
-
-            plt.yticks(ha='left')
-
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap/") / f"heatmap_cross_{measurement_name}_std.png"
-            plt.savefig(fname, format="PNG", bbox_inches='tight', dpi=300)
-            plt.clf()
-
-    def summary_matrix_cross_hirachia(self, measurement_name):
-        res_table = pd.DataFrame()
-        dict_rename = {}
-
-        chossing_methods = [
-                            "mockMiRNA",
-                            "mockMRNA_di_fragment_mockMiRNA", "mockMRNA_di_mRNA", "mockMRNA_di_fragment",
-                            "non_overlapping_sites", "non_overlapping_sites_random",
-                             'tarBase_microArray',
-                            "clip_interaction_clip_3_",
-                            "non_overlapping_sites_clip_data_random"]
-        for i in range(len(chossing_methods)):
-            name = chossing_methods[i]
-            chossing_methods[i] = name.capitalize()
-            dict_rename[chossing_methods[i]] = "Method " + str(i)
-
-        for classifier in self.measurement_dict.keys():
-
-            res_table = pd.DataFrame()
-            out_dir_mean = self.result_dir / classifier / "final_mean.csv"
-            df_mean = read_csv(out_dir_mean)
-            for method_test in chossing_methods:
-                for method_train in chossing_methods:
-                    for (columnName, columnData) in df_mean.iteritems():
-                        train_name = self.clean_name(columnName.split('/')[0])
-                        test_name = self.clean_name(columnName.split('/')[1])
-                        train_name = train_name.replace("__", "_")
-                        train_name = train_name.replace("mockMrna_di_mrna", "mockMrna_di_mrna")
-                        train_name = train_name.replace("mockMrna_di_site", "mockMRNA_di_fragment")
-                        train_name = train_name.replace("mockMrna_di_mockMirna", "mockMRNA_di_fragment_mockMiRNA")
-                        test_name = test_name.replace("__", "_")
-                        test_name = test_name.replace("mockMrna_de_mrna", "mockMrna_di_mrna")
-                        test_name = test_name.replace("mockMrna_de_site", "mockMRNA_di_fragment")
-                        test_name = test_name.replace("mockMrna_de_mockMirna", "mockMRNA_di_fragment_mockMiRNA")
-
-                        if 'mono' in train_name or 'mono' in test_name:
-                            continue
-                        if train_name not in chossing_methods or test_name not in chossing_methods:
-                            print(train_name)
-                            print(test_name)
-                            print("**********************************")
-                            continue
-                        if method_train!=train_name or method_test!=test_name:
-                            continue
-
-                        test_name = self.conver_name(test_name)
-                        train_name = self.conver_name(train_name)
-
-                        res_table.loc[train_name, test_name] = df_mean.loc[measurement_name, columnName]
-            for i in range(len(chossing_methods)):
-                name = self.conver_name(chossing_methods[i])
-                chossing_methods[i] = name
-
-            res_table = res_table.reindex(columns=chossing_methods)
-            cmap = sns.cm.rocket_r
-
-            # Create a clustermap
-            ax = sns.clustermap(res_table, cmap=cmap)
-
-            # Set plot title and axis labels
-            # plt.title("Clustermap of res_table")
-            # plt.xlabel("Train Names")
-            # plt.ylabel("Test Names")
-            ax.ax_heatmap.set_xticklabels(ax.ax_heatmap.get_xticklabels(), rotation=30, ha='right')
-            # ax.ax_heatmap.set_ylabel(ha='right')
-
-            ax.ax_heatmap.set_xlabel("Test")
-            ax.ax_heatmap.set_ylabel("Train")
-            ax.ax_heatmap.set_xlabel("Test", fontsize=16)
-
-            ax.ax_heatmap.set_ylabel("Train", fontsize=16)
-            # Display the plot
-            # plt.show()
-            # sns.color_palette("Spectral", as_cmap=True)
-            # ax.set(xlabel="train", ylabel="test")
-            # plt.xticks(rotation=30, ha='right')
-            # ax.tick_params(axis="y", pad=215)
-
-            # plt.yticks(ha='left')
-
-            fname = ROOT_PATH / Path(f"Results/figuers/{classifier}/heatmap/") / "heatmap_cross_clustring.png"
-            plt.savefig(fname, format="PNG", bbox_inches='tight', dpi=300)
-            plt.clf()
+    
     def summary_result(self):
 
         all_result_mean = pd.DataFrame()
@@ -690,22 +227,20 @@ class CrossValidation(object):
 
     def run_pipline(self):
 
-        # self.split_train_test_files()
+        self.split_train_test_files()
 
-        # self.run_experiment_xgbs(start=0, to=20) #for shap and feature importance #6649424
+        self.run_experiment_xgbs(start=0, to=20) #for shap and feature importance #6649424
      
+        %###########################One class classification########################################
 
-        ###########################One class classification########################################
-        # self.run_experiment_one_class_svm()
-        # self.run_experiment_isolation_forest()
+        self.run_experiment_one_class_svm()
+        self.run_experiment_isolation_forest()
 
-        # self.run_experiment_binary_comper_svm()
-        # self.run_experiment_binary_comper_rf()
+        self.run_experiment_binary_comper_svm()
+        self.run_experiment_binary_comper_rf()
 
-
-
-        ################################Write Results####################################################################
-        # self.write_results() 
+        %################################Write Results###########################################
+        self.write_results() 
         
 
 
@@ -713,4 +248,4 @@ class CrossValidation(object):
 
 ############################### Runnning ############################################
 cv = CrossValidation("darnell_human_ViennaDuplex_features", "measurments_cross_validation", number_iterations=20)
-# cv.run_pipline()
+cv.run_pipline()
