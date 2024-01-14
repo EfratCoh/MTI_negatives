@@ -19,7 +19,7 @@ from utilsfile import read_csv, to_csv
 import Classifier.FeatureReader as FeatureReader
 from Classifier.FeatureReader import get_reader
 from Classifier.ClfLogger import logger
-from consts.global_consts import  ROOT_PATH, DATA_PATH_INTERACTIONS, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS
+from consts.global_consts import  ROOT_PATH, DATA_PATH_INTERACTIONS, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS,one_class_params_path_yml
 from sklearn.ensemble import IsolationForest
 
 class NoModelFound(Exception):
@@ -43,19 +43,9 @@ class ClassifierWithGridSearch(object):
             "one_class_svm": OneClassSVM(),
         }
 
-    # this function response on load the dataset
+    # This function response on load the dataset
     def load_dataset(self):
-        # directory = self.dataset_file.parent
-        # feature_reader = get_reader()
-        # X, y = feature_reader.file_reader(directory / f"{self.dataset_name}.csv")
-        # df_new = pd.concat([X, pd.DataFrame(y)], axis=1)
-        # df_new.rename({0: "Label"}, axis='columns', inplace=True)
-        # df_new = df_new.dropna()
-        # df_new = df_new.drop(df_new[df_new['Label'] == 0].sample(frac=1, random_state=random_state).index)
-        # print("train:", Counter(df_new['Label']))
-        # self.y = df_new['Label']
-        # self.X = df_new.drop(columns=['Label'])
-
+    
         directory = self.dataset_file.parent
         feature_reader = get_reader()
         X, y = feature_reader.file_reader(directory / f"{self.dataset_name}.csv")
@@ -68,7 +58,7 @@ class ClassifierWithGridSearch(object):
 
         output_file = self.result_dir / f"{self.dataset_name}_method_{number_iteration}_{clf_name}.csv"
 
-        # creat the specific clf and load the parameters of the clf according to the ymal file.
+        # create the specific clf and load the parameters of the clf according to the yml file.
         clf = self.clf_dict[clf_name]
         print(clf)
         parameters = conf['parameters']
@@ -129,11 +119,10 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
 
 def build_classifiers_svm(number_iteration):
     number_iteration = str(number_iteration)
-    yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/one_class_params.yml"
+    yaml_file =one_class_params_path_yml
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
     self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="one_class_svm", dir_method="models_one_class_svm",number_iteration=number_iteration)
     print("END main_primary")
 
-# build_classifiers_svm(number_iteration = 0)
 
 
