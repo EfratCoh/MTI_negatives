@@ -71,7 +71,7 @@ from generate_interactions.tarBase import reader
 
 
 # Method 3 - non_overlapping_sites #
-from generate_interactions.non_overlapping_sites import generate
+# from generate_interactions.non_overlapping_sites import generate
 # from pipeline_steps.duplex_step import duplex as duplex_positive
 
 # Method 3a - non_overlapping_sites- energy #
@@ -115,12 +115,11 @@ from generate_interactions.non_overlapping_sites import generate_full_mrna
 # main_run_twice()
 # from pipeline_steps.duplex_step import duplex as duplex_positive
 # full_pipline("non_overlapping_sites_clip_data", "darnell_human_ViennaDuplex_features_negative", duplex_positive)
-###all the 3 run are on clip3 and darenell we need to do that for all clip data
 
 
 #method 6a - non_overlapping_sites_clip_data_random  ######
-from generate_interactions.non_overlapping_sites_clip_data.generate_random import full_pipline_run
-from pipeline_steps.duplex_step import duplex as duplex_positive
+# from generate_interactions.non_overlapping_sites_clip_data.generate_random import full_pipline_run
+# from pipeline_steps.duplex_step import duplex as duplex_positive
 # full_pipline_run()
 # full_pipline("non_overlapping_sites_clip_data", "random_darnell_human_ViennaDuplex_features_negative", duplex_positive)
 #
