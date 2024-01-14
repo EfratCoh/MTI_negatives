@@ -69,14 +69,8 @@ def filter_clash_interaction(df: DataFrame):
         # Intersection to find negative interaction wiche exists in clash poitive interacitons
         intersected_df = pd.merge(df, df_positive_interaction, how='inner', on=['seed_family', 'ID'])
         uniqueValues = len(intersected_df['key'].unique())
-        # print("number of actual interaction to remove: ", uniqueValues)
-        # remove interactions that exists in both of the dataset
-        # print("number of rows to remove:" + str(file.stem) + " " + str(intersected_df.shape[0]))
-        # print("number of rows before:" + str(df.shape[0]))
-        new = df[(~df.key.isin(intersected_df.key))]
-        # print("number of rows after:" + str(new.shape[0]))
-        df = new
-
+        df = df[(~df.key.isin(intersected_df.key))]
+    
     print("################number of rows after filter clash interactions:##########", df.shape[0])
 
     return df
@@ -163,4 +157,3 @@ def genetate_interactions_from_files():
             path_df = GENERATE_DATA_PATH / name_dir / name_file
             to_csv(interactions_df, path_df)
 
-# genetate_interactions_from_files()
