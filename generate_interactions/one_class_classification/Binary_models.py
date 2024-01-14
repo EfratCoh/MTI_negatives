@@ -22,7 +22,7 @@ import Classifier.FeatureReader as FeatureReader
 from Classifier.FeatureReader import get_reader
 from sklearn.ensemble import RandomForestClassifier
 from Classifier.ClfLogger import logger
-from consts.global_consts import  ROOT_PATH, DATA_PATH_INTERACTIONS, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS
+from consts.global_consts import  ROOT_PATH, DATA_PATH_INTERACTIONS, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS, Binary_comper_model_PATH
 from sklearn.ensemble import IsolationForest
 from sklearn.svm import SVC
 
@@ -141,11 +141,9 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
 
 def build_classifiers_binary_comper(number_iteration,dir_method,name_model):
     number_iteration = str(number_iteration)
-    yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/Binary_comper_model.yml"
+    yaml_file =Binary_comper_model_PATH
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
     self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="underSampling", dir_method= dir_method,number_iteration=number_iteration,name_model=name_model)
     print("END main_primary")
 
 
-# build_classifiers_binary_comper(number_iteration=0, dir_method="models_binary_comper_SVM", name_model="SVM")
-# build_classifiers_binary_comper(number_iteration=0, dir_method="models_binary_comper_rf", name_model="rf")
