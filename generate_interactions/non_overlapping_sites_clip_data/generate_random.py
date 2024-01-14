@@ -204,7 +204,7 @@ def worker(df_mrna, df_sites, df_mirna):
 
 def clear_dir_genes():
 
-    path = "/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/split_by_gene/"
+    path = Generate_Interactions/non_overlapping_sites_clip_data/split_by_gene/
     # Get all csv files in the specified directory
     files = [f for f in os.listdir(path) if f.endswith('.csv')]
 
@@ -314,11 +314,8 @@ def combine_files():
     result.reset_index(inplace=True)
     result.drop(columns=['level_0'], inplace=True)
 
-    # result = drop_duplicate(result)
     name = "random_darnell_human_ViennaDuplex_features_negative" + ".csv"
     path_df = GENERATE_DATA_PATH / name_dir / name
-    # result = result.reset_index(drop=True)
-    # result.drop(columns=['level_0'], inplace=True)
     result.reset_index(drop=True, inplace=True)
 
     print('f')
