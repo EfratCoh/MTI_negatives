@@ -144,19 +144,12 @@ def worker(organism, fin, fout_name, tmp_dir):
         new_row['organism'] = row['organism']
         new_row['miRNA ID'] = "mock " + row.miRNA_ID
         new_row['miRNA sequence'] = properties["mock_mirna"]
-        #new_row['target sequence'] = row['sequence']
-        #new_row['number of reads'] = row['number of reads']
-        # new_row["canonic_seed"] = properties["canonic_seed"]
-        # new_row["non_canonic_seed"] = properties["non_canonic_seed"]
         new_row['Gene_ID'] = row.Gene_ID
-        # new_row['mRNA_start'] = 0
-        # new_row['mRNA_end'] = len(row['sequence'])
         new_row['full_mrna'] = row['sequence']
         new_row["num_of_pairs"] = properties["num_of_pairs"]
 
         neg_df = neg_df.append(new_row, ignore_index=True)
-        # if i > 10:
-        #     break
+     
 
 
     ########################
@@ -179,13 +172,9 @@ def main():
     print("tmp:", tmp_base)
     files = list(file_name.glob('**/*.csv'))
     for p in files:
-        name = Path("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_merge/darnell_human_ViennaDuplex_features.csv")
-        if p != name:
-            continue
         fout_name = p.name.split('.csv')[0] + '.csv'
         worker('hsa', p, fout_name, tmp_base)
 
-# main()
 
 
 
