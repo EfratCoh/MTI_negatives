@@ -22,12 +22,6 @@ def finalize(fin: str, fout:str):
     df: DataFrame = read_csv(Path(fin))
     logger.info("extract the site")
 
-    # df["site"] = df[df["full_mrna"].notnull()].apply(
-    #     func=get_wrapper(get_subsequence_by_coordinates_no_exception,
-    #                      "full_mrna", "start", "end",
-    #                      extra_chars=SITE_EXTRA_CHARS),
-    #     axis=1)
-
 
     def eta(x):
         try:
@@ -61,17 +55,7 @@ def finalize(fin: str, fout:str):
     columns_name= list(df.columns)
     if 'level_0' in columns_name:
        df.drop(columns=['level_0'], inplace=True)
-
-    #df = df[NORMALIZATION_COLUMNS]
     to_csv(df, Path(fout))
 
 
-
-if __name__ == '__main__':
-    # cli()
-    fin = NEGATIVE_DATA_PATH / "tarBase/duplex_rna_site.csv"
-    fout = NEGATIVE_DATA_PATH / "tarBase/tarBase_human_negative_normalization.csv"
-    #finalize(fin, fout)
-    df = pd.read_csv(Path(fout))
-    print(df)
 
