@@ -1,7 +1,5 @@
 from pathlib import Path
 from pandas import DataFrame, Series
-import click
-
 from consts.global_consts import HUMAN_SITE_EXTENDED_LEN, SITE_EXTRA_CHARS
 from consts.pipeline_steps import ROOT_PATH
 from utils.logger import logger
@@ -51,8 +49,6 @@ def get_site_from_extended_site(fin: str, fout:str):
                                                   'start', 'site'),
                                  axis=1)
 
-    # df["site"] = df.apply(func=get_wrapper(get_subsequence_by_coordinates,
-    #                                        "full_mrna", "start", "end", extra_chars=SITE_EXTRA_CHARS),axis=1)
 
     df["site"] = df.apply(func=get_wrapper(get_subsequence_by_coordinates,
                                            "full_mrna", "start", "end"), axis=1)
@@ -61,9 +57,4 @@ def get_site_from_extended_site(fin: str, fout:str):
 
 
 
-
-if __name__ == '__main__':
-    fin = ROOT_PATH / "generate_interactions/duplex_sample.csv"
-    fout = ROOT_PATH / "generate_interactions/duplex_rna_site.csv"
-    get_site_from_extended_site(fin, fout)
 
