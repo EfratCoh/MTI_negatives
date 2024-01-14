@@ -61,12 +61,3 @@ class Features(ABC):
     def extract_features(self):
         pass
 
-    # site_with_stars_and_hashtags, mRNA_seq_extended, mRNA_seq_extended_offset, full_mrna_seq, ensg,
-    # hint)
-#
-#
-# def feature_extraction(miRNA: str, site: str, start: int, end: int, sequence: str, feature_cls_list: List[Features]) -> Series:
-#     dp: Duplex = Duplex.fromChimera(miRNA, site)
-#     features = [feature_cls(dp, miRNA, site, start, end, sequence).get_features() for feature_cls in feature_cls_list]
-#     return pd.concat(features)
-#
