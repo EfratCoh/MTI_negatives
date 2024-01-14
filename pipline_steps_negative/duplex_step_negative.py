@@ -50,8 +50,3 @@ def duplex(method: str, fin: str, fout: str):
     result["duplex_method"] = method
     to_csv(result, Path(fout))
 
-
-if __name__ == '__main__':
-    fin = GENERATE_DATA_PATH / "mockMirna" / "darnell_human_ViennaDuplex_features_check.csv"
-    fout = GENERATE_DATA_PATH / "mockMirna" / "bug_check.csv"
-    duplex('ViennaDuplex', fin, fout)
