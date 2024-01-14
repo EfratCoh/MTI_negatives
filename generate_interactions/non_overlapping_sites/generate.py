@@ -57,22 +57,6 @@ def generate_negative_seq(orig_mirna, full_mrna, num_of_tries=10000):
         return True, properties
     return False, {}
 
-def generate_negative_seq_2(orig_mirna, full_mrna, num_of_tries=10000):
-    canonic_seed, non_canonic_seed, num_of_pairs, MEF_duplex, site = valid_negative_seq(orig_mirna, full_mrna)
-
-    properties = {
-            "mock_mirna": orig_mirna,
-            "full_mrna": full_mrna,
-            "canonic_seed": canonic_seed,
-            "non_canonic_seed": non_canonic_seed,
-            "num_of_pairs": num_of_pairs,
-            "MEF_duplex": MEF_duplex,
-            "site": site
-        }
-    return True, properties
-
-
-
 
 def sub_without_site(full_mrna, start, end, site):
     sub = full_mrna[:int(start) - 1] + full_mrna[int(end):]
@@ -113,8 +97,6 @@ def worker(fin, fout_name, tmp_dir):
         # get all the rows of this subset of interactions with the same mirna and mrna
         rows_group = rows_group[rows_group["miRNA_ID"] == mirna_name]
 
-        # rows_group['cut_mrna'] = rows_group.apply(func=get_wrapper(sub_without_site,
-        #              "sequence", "start", "end", "site"), axis=1)
         full_mrna = rows_group.iloc[0]["sequence"]
         mrna_cut = rows_group.iloc[0]["sequence"]
         extra_chars = 10
@@ -129,7 +111,6 @@ def worker(fin, fout_name, tmp_dir):
 
         print(f"$$$$$$$$$$$$$$$ {i} $$$$$$$$$$$$$$$$$$4")
         global_count = 0
-        # cut_mrna = row['cut_mrna']
         cut_mrna = mrna_cut
 
         size_param = 40
@@ -166,9 +147,9 @@ def worker(fin, fout_name, tmp_dir):
             continue
 
         neg_df = neg_df.append(new_row, ignore_index=True)
-        # if i > 1:
-        #     break
 
+
+    
     #######################
     # Save df to CSV
     #######################
@@ -177,12 +158,7 @@ def worker(fin, fout_name, tmp_dir):
     neg_df["key"] = neg_df.reset_index().index
     fout = tmp_dir / fout
     to_csv(neg_df, fout)
-    print("save:", fout)
-    print(neg_df.shape)
-    print(neg_df)
-
-    print("The number of interacrtion that not  founf:", count)
-
+    
 
 
 def main():
@@ -191,28 +167,6 @@ def main():
     print("tmp:", tmp_base)
     files = list(file_name.glob('**/*.csv'))
     for p in files:
-        if "darnell" not in p.stem:
-            continue
-        print(p)
         fout_name = p.name.split('.csv')[0] + '.csv'
         worker(p, fout_name, tmp_base)
-        break
-
-# main()
-# print("")
-
-#
-# count = 0
-# df = read_csv(Path("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites/darnell_human_ViennaDuplex_features_negative.csv"))
-# gruop_rows = df.groupby(['Gene_ID', "miRNA ID"])
-# group = list(gruop_rows.groups)
-# for g in group:
-#     mirna_name = g[1]
-#     mrna_name = g[0]
-#     rows_group = df[(df['Gene_ID'] == mrna_name)]
-#     # get all the rows of this subset of interactions with the same mirna and mrna
-#     rows_group = rows_group[rows_group["miRNA ID"] == mirna_name]
-#     if len(rows_group) > 1:
-#         count = count + 1
-# print(count)
-#
+        
