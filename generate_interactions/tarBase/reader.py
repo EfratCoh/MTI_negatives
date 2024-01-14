@@ -11,8 +11,6 @@ from utils.logger import logger
 from utils.utilsfile import get_subsequence_by_coordinates, get_wrapper, to_csv
 import numpy as np
 
-# necessary_columns = set(['GI_ID', 'microRNA_name', 'miRNA sequence', 'target sequence', 'number of reads'])
-
 
 def read() -> DataFrame:
     # Consts
@@ -25,11 +23,6 @@ def read() -> DataFrame:
     df: DataFrame = pd.read_excel(file_name, usecols=usecols, engine='openpyxl')
     assert df.columns[0] == validation_string, f"reader validation error: {df.columns[0]}"
     print("Number of interactions in tarBase is:", df.shape[0])
-
-    # # filter only liver interaction that will be match to darnell
-    # df = df[df['tissue'] == 'Liver']
-    # print("Number of after filter is:", df.shape[0])
-
     return df
 
 def change_columns_names(df: DataFrame) -> DataFrame:
@@ -105,15 +98,11 @@ def mrna_sequences(df: DataFrame):
     df_human_3utr = df_human_3utr.loc[df_human_3utr.groupby(['Gene_ID'])["sequence length"].idxmax()]
     df_human_3utr = df_human_3utr.rename(columns={'sequence': 'full_mrna'})
 
-    ##############
-    # mrna_seq_list = df_human_3utr["Gene_ID"].tolist()
-    # df['new'] = df['Gene_ID'].apply(lambda x: x not in mrna_seq_list)
-    # # print(df['new'] == True)
 
-    # for each mRNA we find the longest sequence of the target
+    # For each mRNA we find the longest sequence of the target
     df = pd.merge(df, df_human_3utr, how='inner', on=['Gene_ID'])
 
-    # clean mrna that samll
+    # clean mrna that small
     df = df[df['full_mrna'].apply(lambda x: len(x)) > 40]
 
     df = df.drop(columns=['Gene_ID', 'Unnamed: 0', 'sequence length'], axis=1)
@@ -176,11 +165,6 @@ def run(out_filename):
     save(df, out_filename)
 
 
-# if __name__ == '__main__':
-#     run("generate_interactions/tarBase/tarBase_human_negative.csv")
-#     path = ROOT_PATH / "generate_interactions/tarBase/tarBase_human_negative.csv"
-#     df = pd.read_csv(Path(path))
-#     print(df)
 
 
 
