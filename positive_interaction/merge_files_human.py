@@ -140,18 +140,19 @@ def filter(result) -> DataFrame:
 def processing():
 
     # Dataset one
-    # result_h1 = merge("human_mapping_ViennaDuplex_features")
-    # result_h1 = filter(result_h1)
-    # print("H1 after filter:", result_h1.shape)
-    # save(result_h1, "human_mapping_ViennaDuplex_features.csv")
-    #
-    #
+    result_h1 = merge("human_mapping_ViennaDuplex_features")
+    result_h1 = filter(result_h1)
+    print("H1 after filter:", result_h1.shape)
+    save(result_h1, "human_mapping_ViennaDuplex_features.csv")
+    
+    
     # # Dataset two
-    # result_h2 = merge("unambiguous_human_ViennaDuplex_features")
-    # result_h2 = filter(result_h2)
-    # print("H2 after filter:", result_h2.shape)
-    # save(result_h2, "unambiguous_human_ViennaDuplex_features.csv")
-    #
+    result_h2 = merge("unambiguous_human_ViennaDuplex_features")
+    result_h2 = filter(result_h2)
+    print("H2 after filter:", result_h2.shape)
+    save(result_h2, "unambiguous_human_ViennaDuplex_features.csv")
+    
+    
     # # # Data set three
     result_h3 = merge("darnell_human_ViennaDuplex_features")
     result_h3 = filter(result_h3)
@@ -159,11 +160,10 @@ def processing():
     save(result_h3, "darnell_human_ViennaDuplex_features.csv")
 
     # Dataset four
-    # fill_full_name_mirRNA("qclash_melanoma_human_ViennaDuplex_features")
-    # result_h4 = merge_q_clash("qclash_melanoma_human_ViennaDuplex_features")
-    # save(result_h4, "qclash_melanoma_human_ViennaDuplex_features.csv")
+    fill_full_name_mirRNA("qclash_melanoma_human_ViennaDuplex_features")
+    result_h4 = merge_q_clash("qclash_melanoma_human_ViennaDuplex_features")
+    save(result_h4, "qclash_melanoma_human_ViennaDuplex_features.csv")
 
-processing()
 
 
 
