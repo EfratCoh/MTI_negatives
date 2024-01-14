@@ -69,16 +69,7 @@ def finalize(fin: str, fout:str):
     df = df[NORMALIZATION_COLUMNS]
     to_csv(df, Path(fout))
 
- # df["start_end"] = df.apply(
-    #     func=get_wrapper(get_substring_index,
-    #                      "region_sequence", "site"),
-    #     axis=1)
-    # df[['start', 'end']] = pd.DataFrame([*df["start_end"]], df.index)
 
 
 
-if __name__ == '__main__':
-    fin = ROOT_PATH / "generate_interactions/duplex.csv"
-    fout = ROOT_PATH / "generate_interactions/normalization.csv"
-    finalize(fin, fout)
 
