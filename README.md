@@ -20,5 +20,5 @@ The code is divided into the following folders and files:
 5. "duplex" folder - contains the files with which the duplex of the interaction is calculated during the interaction processing phase.
 6. "classifier" folder - contains the file ClassifierWithGridSearch.py which is responsible for creating a model including selecting parameters using grid search. A yaml folder in which the parameters for each of the tested models are found.
 7. full_pipline_positive file- the full runtime file for positive interactions. including the initial processing for interactions and feature extraction.
-7. full_pipline_negative file - the complete runtime file for negative interactions. including the creation of the interactions for each of the methods, the initial processing for interactions and feature extraction.
+7. full_pipline_negative file - the complete runtime file for negative interactions including the creation of the interactions for each method, the initial processing for interactions, and feature extraction.
 8. Classifiers_Cross_Validation_Runing file- contains the experiment itself. Running the models and creating them as well as extracting the results.
