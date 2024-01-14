@@ -16,12 +16,6 @@ from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
-# import FeatureReader
-# from FeatureReader import get_reader
-# from dataset import Dataset
-# from consts.global_consts import ROOT_PATH, NEGATIVE_DATA_PATH, MERGE_DATA, DATA_PATH_INTERACTIONS
-# from dataset import Dataset
-# from utils.utilsfile import read_csv, to_csv
 from utilsfile import read_csv, to_csv
 from sklearn.metrics import f1_score
 from sklearn.metrics import classification_report
@@ -57,21 +51,10 @@ def model_confuse_matrix(x_test, y_test, model, model_name,s_org,d_org,name_clas
 
 def measurement(y_true, y_pred):
     cm = confusion_matrix(y_true, y_pred).ravel()
-    # cm = confusion_matrix(y_true, y_pred)
-
-    # print(cm)
-    # TP = cm[0][0]
-    # FP = cm[0][1]
-    # FN = cm[1][0]
-    # TN = cm[1][1]
     TP = cm[3]
     FP = cm[1]
     FN = cm[2]
     TN = cm[0]
-    print("TP:", TP)
-    print("FP:", FP)
-    print("FN:", FN)
-    print("TN:", TN)
     try:
         auc = roc_auc_score(y_true, y_pred)
     except:
@@ -262,94 +245,22 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
 
                     # save measures
                     if name_classifier == 'svm' or name_classifier == 'isolation_forest':
-
-
-                        # Get the scores for the testing dataset
-                        # score = clf.score_samples(X_test)
-                        # # Check the score for 2% of outliers
-                        # score_threshold = np.percentile(score, 2)
-                        # print(f'The customized score threshold for 2% of outliers is {score_threshold:.2f}')
-                        # # Check the model performance at 2% threshold
-                        # # prediction_1 = [0 if i < score_threshold else 1 for i in score]
-                        # # # # Check the prediction performance
-                        # # prediction_2 = [0 if i == -1 else 1 for i in clf.predict(X_test)]
-                        # # prediction_1 = [0 if i < score_threshold else 1 for i in score]
-                        #
                         prediction = clf.predict(X_test)
                         print("prediction_2:", Counter(clf.predict(X_test)))
                         prediction[prediction == -1] = 0  # negative class
                         prediction[prediction == 1] = 1  # positive class
-                        #
-                        # print("true:", Counter(y_test))
-                        #
-                        # print('__________________________Results__________________________')
-                        # # print('tn fp fn tp')
-                        # # print("__________________________option 1__threshold________________________")
-                        # # print(confusion_matrix(y_test, prediction_1).ravel())
-                        # # print("__________________________option 2___________________________")
-                        # # print(confusion_matrix(y_test, prediction_2).ravel())
-                        # score = f1_score(y_test, prediction)
-                        # print('F1 Score: %.3f' % score)
-                        # precision = precision_score(y_test, prediction, average='binary')
-                        # print('Precision: %.3f' % precision)
-                        # recall = recall_score(y_test, prediction, average='binary')
-                        # print('Recall: %.3f' % recall)
-                        # # model_confuse_matrix(X_test,y_test, clf, method, clf_dataset, test_dataset,name_classifier)
-
                     else:
-
                         prediction = clf.predict(X_test)
                         # shap graph
-                        if "microarray" not in conver_name(clean_name(clf_dataset)):
-                            continue
                         model_shap_plot(X_test, clf, method, clf_dataset, test_dataset,name_classifier, dependence_feature=None)
                         # features importance graph
                         plot_feature_importances(clf, X_test, clf_dataset, test_dataset, name_classifier)
-                        # model_confuse_matrix(X_test, y_test, clf, method, clf_dataset, test_dataset,name_classifier)
 
                     if name_classifier == 'isolation_forest':
                         # features shap graph
                         model_shap_plot(X_test, clf, method, clf_dataset, test_dataset,name_classifier, dependence_feature=None)
-
-                   #### ROC Curve ####
-                    # y_score = clf.score_samples(X_test)
-                    #
-                    # from sklearn.metrics import roc_curve
-                    # fpr, tpr, thresholds = roc_curve(y_test, y_score)
-                    # import matplotlib.pyplot as plt
-                    # plt.plot(fpr, tpr, 'k-', lw=2)
-                    # plt.xlabel('FPR')
-                    # plt.ylabel('TPR')
-                    # plt.show()
-                    ###################################################################
-
-                    # precision recall curve
-
-
-                    # predict probabilities
-                    # lr_probs = clf.decision_function(X_test)
-                    # # keep probabilities for the positive outcome only
-                    # lr_probs = lr_probs[:, 1]
-                    # # predict class values
-                    # yhat = clf.predict(X_test)
-                    # lr_precision, lr_recall, _ = precision_recall_curve(y_test, lr_probs)
-                    # lr_f1, lr_auc = f1_score(y_test, yhat), auc(lr_recall, lr_precision)
-                    # # summarize scores
-                    # print('Logistic: f1=%.3f auc=%.3f' % (lr_f1, lr_auc))
-                    # # plot the precision-recall curves
-                    # no_skill = len(y_test[y_test == 1]) / len(y_test)
-                    # pyplot.plot([0, 1], [no_skill, no_skill], linestyle='--', label='No Skill')
-                    # pyplot.plot(lr_recall, lr_precision, marker='.', label='Logistic')
-                    # # axis labels
-                    # pyplot.xlabel('Recall')
-                    # pyplot.ylabel('Precision')
-                    # # show the legend
-                    # pyplot.legend()
-                    # # show the plot
-                    # pyplot.show()
-
-
                     ms = measurement(y_test, prediction)
+                    
                     if name_classifier == 'svm' or name_classifier == 'isolation_forest':
                         # # Predict scores for test set- is realte to positive calss
                         y_scores = clf.decision_function(X_test)
@@ -375,25 +286,6 @@ def different_results_summary(method_split: str, model_dir: str, number_iteratio
     res_table.sort_index(axis=0, inplace=True)
     res_table.sort_index(axis=1, inplace=True)
 
-    print(res_table)
-    # to_csv(res_table, results_dir / "summary" / "diff_summary_stratify.csv")
-    # print(name_classfier)
     to_csv(ms_table, results_dir /"results_iterations" / name_classifier /f"measurement_summary_{number_iteration}.csv")
     print("END result test")
     return ms_table
-
-
-# different_results_summary(method_split="underSampling", model_dir="models_underSampling")
-
-# different_results_summary(method_split="one_class_svm", model_dir="models_one_class_svm")
-# different_results_summary(method_split="one_class_svm", model_dir="models_one_class_svm",
-#                                   number_iteration=0, name_classifier='svm')
-
-# different_results_summary(method_split="underSampling", model_dir="models_underSampling",
-#                           number_iteration=0, name_classifier='xgbs')
-
-
-# different_results_summary(method_split="one_class_svm", model_dir="models_isolation_forest",
-#                               number_iteration=0, name_classifier='isolation_forest')
-# different_results_summary(method_split="one_class_svm", model_dir="models_isolation_forest",
-#                           number_iteration=0, name_classifier='isolation_forest')
