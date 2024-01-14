@@ -121,9 +121,3 @@ def run_mirna_generate_files():
             to_csv(df, path=path_df)
 
 
-# run_mirna_generate_files()
-
-# df = read_csv("/sise/vaksler-group/IsanaRNA/miRNA_target_rules/Isana/clip_10/mirna.csv")
-# df_g = df.groupby(['miRNA ID'])
-# print(df_g.ngroups)
-
