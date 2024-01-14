@@ -131,71 +131,7 @@ class CrossValidation(object):
         for i in range(self.number_iterations):
             self.run_isolation_forest(number_iteration=i)
 
-    def conver_name(self, name):
-        if name == "Tarbase_liver":
-            name = "TarBase_Liver"
-        elif name == "Tarbase":
-            name = "TarBase"
-        elif name == "Tarbase_microarray":
-            name = "TarBase_microarray"
-        elif name == "Mockmirna":
-            name = "Mock_miRNA"
-        elif name == "Non_overlapping_sites":
-            name = "NPS_CLASH_MFE"
-        elif name == "Non_overlapping_sites_random":
-            name = "NPS_CLASH_Random"
-        elif name == "Non_overlapping_sites_top_median":
-            name = "NPS_CLASH_Median"
-        elif name == "Non_overlapping_sites_top_20_percent":
-            name = "NPS_CLASH_20th_Percentile"
-        elif name == "Mockmrna_mono_mrna":
-            name = "Mock_mono_mRNA"
-        elif name == "Mockmrna_di_mrna":
-            name = "Mock_di_mRNA"
-        elif name == "Mockmrna_mono_site":
-            name = "Mock_mono_fragment"
-        elif name == "Mockmrna_di_fragment":
-            name = "Mock_di_fragment"
-        elif name == "Mockmrna_di_fragment_mockmirna":
-            name = "Mock_di_fragment_&_miRNA"
-        elif name == "Mockmrna_mono_fragment_mockmirna":
-            name = "Mock_mono_fragment_&_miRNA"
-        elif name == "Clip_interaction_clip_3_":
-            name = "CLIP_non_CLASH"
-        elif name == "Non_overlapping_sites_clip_data":
-            name = "NPS_CLIP_MFE"
-        elif name == "Non_overlapping_sites_clip_data_random":
-            name = "NPS_CLIP_Random"
-        return name
-
-    def clean_name(self, name):
-
-        name_clean = name.replace("model:", "").replace("human", "").replace("darnell_human", "").replace("test:",
-                                                                                                          "").replace(
-            "ViennaDuplex", "").replace("_darnell_", "").replace("__", "")
-
-        name_clean = name_clean.replace("_nucleotides", "_mono", )
-        name_clean = name_clean.replace("denucleotides", "_di")
-        name_clean = name_clean.replace("method1", "mrna")
-        name_clean = name_clean.replace("method2", "site")
-        name_clean = name_clean.replace("method3", "mockMirna")
-
-        if name_clean == "mockMirnadarnell":
-            name_clean = "mockMirna"
-        if name_clean == "mockMrnadarnell":
-            name_clean = "mockMrna"
-        if name_clean == "nonoverlappingsitesdarnell":
-            name_clean = "Non site"
-        if name_clean == "mockMrna__di_mockMirna":
-            name_clean = "mockMrna__di_fragment_mockMirna"
-        if name_clean == "mockMrna__di_site":
-            name_clean = "mockMrna__di_fragment"
-        if name_clean == "mockMrna_mono_mockMirna":
-            name_clean = "mockMrna__mono_fragment_mockMirna"
-        name_clean = name_clean.replace("rna", "RNA")
-        name_clean = name_clean.capitalize()
-
-        return name_clean
+    
     
     def summary_result(self):
 
