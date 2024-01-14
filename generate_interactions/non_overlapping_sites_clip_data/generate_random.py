@@ -327,32 +327,9 @@ def combine_files():
 
 
 def main_run_clip():
-    run(start=0, to=100)
+    run(start=0, to=1815)
 
-    run(start=101, to=300)
-
-    run(start=301, to=600)
-
-    run(start=601, to=900)
-
-    run(start=901, to=1000)
-
-    run(start=1001, to=1200)
-
-    run(start=1201, to=1400)
-
-    run(start=1401, to=1600)
-
-    run(start=1601, to=1815)
-
-# split_file_by_gene()
-# main_run_clip()
-# combine_files()
-# maybe we need to filter the interactions- because for each gene we have a lot of candidate
-# check that for each gen we have only one candidate
-# d = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/darnell_human_ViennaDuplex_features_negative.csv")
-# print(d.shape)
-
+    
 def find_files_clash(name, path):
     results = []
     for root, dirs, files in os.walk(path):
@@ -382,7 +359,7 @@ def find_gene_CLIP_not_found_interactions_clip():
                 k_clip_all= set(list(mrna_df['Gene_ID']))
 
 
-        interaction_find = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/non_overlapping_sites_clip_data_2.csv")
+        interaction_find = read_csv(Generate_Interactions/non_overlapping_sites_clip_data/non_overlapping_sites_clip_data_2.csv)
         k_clip_sub = set(list(interaction_find['Gene_ID']))
 
         #list of gene that need rerun
@@ -390,20 +367,17 @@ def find_gene_CLIP_not_found_interactions_clip():
         all_files = []
         for gene in x:
             name = gene
-            path = "/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/split_by_gene/"
+            path = Generate_Interactions/non_overlapping_sites_clip_data/split_by_gene/
             all_files.extend(find_files_clip(name, path))
         print(len(x))
         print(len(all_files))
         return all_files
-#
-# list_rerun = find_gene_CLIP_not_found_interactions_clip()
-# print(list_rerun)
 
 
 def clsah_split_gene():
 
     # clean directory
-    path = "/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/split_by_gene_clash/"
+    path = "ROOT_PATH/non_overlapping_sites_clip_data/split_by_gene_clash/"
     # Get all csv files in the specified directory
     files = [f for f in os.listdir(path) if f.endswith('.csv')]
 
@@ -414,8 +388,7 @@ def clsah_split_gene():
 
     # generate file
     clip_data_path = CLIP_PATH_DATA
-    clash_darnell = read_csv(
-        "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+    clash_darnell = POITIVE_DATA
     c = list(clash_darnell['Gene_ID'])
     # clash gene
     k_clash = set(c)
@@ -491,18 +464,14 @@ def run_clash(start, to):
 
 def main_run_clash():
 
-    run_clash(start=0, to=500)
-    run_clash(start=501, to=1000)
-    run_clash(start=1001, to=1500)
-    run_clash(start=1501, to=1688)
+    run_clash(start=0, to=1668)
 
 
 
 
 # to append more interactions
 def find_gene_apper_more_than_one_time():
-        clash_darnell = read_csv(
-            "/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_new/featuers_step/darnell_human_ViennaDuplex_features.csv")
+        clash_darnell = POSTIVE_INTERACTION
 
         result = clash_darnell['Gene_ID'].value_counts()
         result = result[result > 2].index.tolist()
@@ -535,14 +504,3 @@ def full_pipline_run():
     combine_files()
 
 
-
-# d = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites/darnell_human_ViennaDuplex_features_random_negative.csv")
-# d1=read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites/darnell_human_ViennaDuplex_features_negative.csv")
-# print("F")
-# d0 = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/darnell_human_ViennaDuplex_features_negative.csv")
-# d = read_csv("/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/random_darnell_human_ViennaDuplex_features_negative.csv")
-# print("f")
-# d= read_csv("/sise/home/efrco/efrco-master/data/positive_interactions/positive_interactions_merge/darnell_human_ViennaDuplex_features.csv")
-# d["len"] = d['sequence'].apply(lambda r:len(r))
-# print("f")
-full_pipline_run()
