@@ -64,15 +64,11 @@ class CrossValidation(object):
 
     def run_one_class_svm(self, number_iteration):
         build_classifiers_svm(number_iteration)
-        different_results_summary(method_split="one_class_svm", model_dir="models_one_class_svm",
-                                   number_iteration=number_iteration, name_classifier='svm')
         different_results_summary(method_split="underSampling", model_dir="models_one_class_svm",
                                   number_iteration=number_iteration, name_classifier='svm')
 
     def run_isolation_forest(self, number_iteration):
         build_classifiers_isolation_forest(number_iteration)
-        different_results_summary(method_split="one_class_svm", model_dir="models_isolation_forest",
-                                   number_iteration=number_iteration, name_classifier='isolation_forest')
         different_results_summary(method_split="underSampling", model_dir="models_isolation_forest",
                                   number_iteration=number_iteration, name_classifier='isolation_forest')
 
