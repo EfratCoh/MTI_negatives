@@ -43,10 +43,3 @@ def feature_extraction(fin: str, fout: str):
 
 
 
-
-# fin = "/sise/home/efrco/efrco-master/data/negative_interactions/mockMrna/mockMrna_denucleotides_method1_darnell_human_ViennaDuplex_negative_normalization.csv"
-# fout = "/sise/home/efrco/efrco-master/mock.csv"
-# df = read_csv(fin)
-# df = df[df['start'] == 1]
-# to_csv(df,fout)
-# feature_extraction(fout, fout)
