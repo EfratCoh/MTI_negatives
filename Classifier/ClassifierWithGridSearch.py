@@ -50,10 +50,7 @@ class ClassifierWithGridSearch(object):
     def train_one_conf(self, clf_name, conf, scoring="accuracy"):
 
         output_file = self.result_dir / f"{self.dataset_name}_{clf_name}.csv"
-        # if output_file.is_file():
-        #     print(f"output file: {output_file} exits. skip.")
-        #     return
-
+      
         # creat the specific clf and load the parameters of the clf according to the ymal file.
         clf = self.clf_dict[clf_name]
         print(clf)
@@ -116,8 +113,7 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
     csv_dir = DATA_PATH_INTERACTIONS / "train" / name_method / number_iteration
     files = list(csv_dir.glob('**/*.csv'))
     for f in files:
-       
-        results_dir = ROOT_PATH / "Results/models" / dir_method / number_iteration
+               results_dir = ROOT_PATH / "Results/models" / dir_method / number_iteration
         logger.info(f"results_dir = {results_dir}")
         logger.info(f"start dataset = {f}")
         worker(f, results_dir=results_dir, yaml_file=yaml_file)
@@ -126,7 +122,6 @@ def self_fit(feature_mode, yaml_file, first_self, last_self, name_method, dir_me
 
 
 def build_classifiers(number_iteration):
-    # yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params_small.yml"
     yaml_file = "/sise/home/efrco/efrco-master/Classifier/yaml/xgbs_params.yml"
 
     FeatureReader.reader_selection_parameter = "without_hot_encoding"
@@ -134,9 +129,7 @@ def build_classifiers(number_iteration):
     self_fit("without_hot_encoding", yaml_file, 1, 2, name_method="underSampling", dir_method="models_underSampling", number_iteration=number_iteration)
     print("END main_primary")
 
-# build_classifiers()
 
-# build_classifiers(number_iteration=0)
 
 
 
