@@ -471,7 +471,7 @@ def find_gene_apper_more_than_one_time():
         all_files_twice = []
         for gene in result:
             name = gene
-            path = "/sise/home/efrco/efrco-master/generate_interactions/non_overlapping_sites_clip_data/split_by_gene_clash/"
+            path = NEGATIVE_INTERACTIONS/non_overlapping_sites_clip_data/split_by_gene_clash
             all_files_twice.extend(find_files_clash(name, path))
 
         find_interaction = NEGATIVE_INTERACTIONS/non_overlapping_sites_clip_data/darnell_human_ViennaDuplex_features_negative.csv
